@@ -1,0 +1,314 @@
+/* pages/community/community.wxss */
+
+/* ========== 全局CSS变量 ========== */
+page {
+  --color-white: #FFFFFF;
+  --color-snow: #FAFBFD;
+  --color-ice: #F0F4F8;
+  --color-sky: #5B9BD5;
+  --color-glacier: #4A90E2;
+  --color-ice-light: #E8F4FD;
+  --color-frozen: #A8D8F8;
+  --color-text: #2C3E50;
+  --color-subtext: #7F8C8D;
+  --color-border: #E1E8ED;
+  --color-rock: #95A5A6;
+  --color-bg: #F7F9FA;
+  --color-warm: #FF8B5A;
+  --color-sunset: #FF6B35;
+  --shadow-card: 0 2px 12px rgba(91, 155, 213, 0.08);
+  --shadow-button: 0 4px 12px rgba(74, 144, 226, 0.25);
+  --radius-small: 8px;
+  --radius-medium: 12px;
+  --radius-large: 16px;
+  --radius-pill: 24px;
+  background-color: var(--color-snow);
+}
+
+.community-page {
+  min-height: 100vh;
+  padding-bottom: 100rpx;
+}
+
+/* ========== 顶部导航栏 ========== */
+.nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-ice-light);
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: var(--color-text);
+}
+
+.location-icon {
+  margin-right: 8rpx;
+}
+
+.location-text {
+  font-weight: 500;
+}
+
+.location-arrow {
+  margin-left: 8rpx;
+  color: var(--color-rock);
+}
+
+.nav-actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.search-btn,
+.message-btn {
+  font-size: 36rpx;
+  padding: 8rpx;
+}
+
+/* ========== 分类Tab ========== */
+.category-tabs {
+  display: flex;
+  padding: 20rpx 32rpx;
+  background: var(--color-white);
+  gap: 32rpx;
+  overflow-x: auto;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--color-ice-light);
+}
+
+.tab-item {
+  position: relative;
+  padding: 12rpx 24rpx;
+  font-size: 28rpx;
+  color: var(--color-rock);
+  border-radius: var(--radius-pill);
+  transition: all 0.3s;
+}
+
+.tab-item.active {
+  color: var(--color-glacier);
+  background: var(--color-ice-light);
+  font-weight: 500;
+}
+
+.tab-indicator {
+  position: absolute;
+  bottom: -8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 4rpx;
+  background: var(--color-glacier);
+  border-radius: 2rpx;
+}
+
+/* ========== 笔记列表 - 瀑布流 ========== */
+.notes-container {
+  display: flex;
+  padding: 20rpx 24rpx;
+  gap: 20rpx;
+}
+
+.notes-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+/* ========== 笔记卡片 ========== */
+.note-card {
+  background: var(--color-white);
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s;
+}
+
+.note-card:active {
+  transform: translateY(-4rpx);
+  box-shadow: 0 8px 24px rgba(91, 155, 213, 0.15);
+}
+
+/* 封面图 */
+.note-cover {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 125%; /* 4:5 比例 */
+  background-size: cover;
+  background-position: center;
+  background-color: var(--color-ice);
+}
+
+.note-type-badge {
+  position: absolute;
+  top: 16rpx;
+  left: 16rpx;
+  padding: 8rpx 20rpx;
+  border-radius: var(--radius-pill);
+  font-size: 22rpx;
+  color: var(--color-white);
+  font-weight: 500;
+  backdrop-filter: blur(10rpx);
+}
+
+.note-type-badge.experience {
+  background: rgba(91, 155, 213, 0.9);
+}
+
+.note-type-badge.partner {
+  background: rgba(78, 205, 196, 0.9);
+}
+
+/* 标题 */
+.note-title {
+  padding: 20rpx 20rpx 12rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.4;
+  height: 76rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* 作者信息 */
+.note-author {
+  display: flex;
+  padding: 12rpx 20rpx;
+  gap: 16rpx;
+}
+
+.author-avatar {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  border: 2rpx solid var(--color-ice-light);
+}
+
+.author-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8rpx;
+}
+
+.author-name {
+  font-size: 24rpx;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.author-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.author-tag {
+  padding: 4rpx 12rpx;
+  background: var(--color-ice-light);
+  color: var(--color-glacier);
+  font-size: 20rpx;
+  border-radius: var(--radius-small);
+}
+
+/* 互动信息 */
+.note-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 16rpx 20rpx;
+  border-top: 1px solid var(--color-ice);
+}
+
+.stat-item {
+  font-size: 24rpx;
+  color: var(--color-subtext);
+}
+
+.partner-info {
+  color: var(--color-warm);
+  font-weight: 500;
+}
+
+/* ========== 空状态 ========== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: var(--color-text);
+  margin-bottom: 12rpx;
+}
+
+.empty-hint {
+  font-size: 26rpx;
+  color: var(--color-rock);
+}
+
+/* ========== 发布按钮 ========== */
+.publish-btn {
+  position: fixed;
+  right: 32rpx;
+  bottom: 120rpx;
+  width: 112rpx;
+  height: 112rpx;
+  background: linear-gradient(135deg, var(--color-warm) 0%, var(--color-sunset) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-button);
+  z-index: 99;
+}
+
+.publish-icon {
+  font-size: 48rpx;
+}
+
+/* ========== 加载状态 ========== */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx;
+  gap: 20rpx;
+  color: var(--color-rock);
+  font-size: 26rpx;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid var(--color-ice-light);
+  border-top-color: var(--color-sky);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

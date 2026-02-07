@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>滑雪场助手 - Demo预览（更新版）</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #F5F5F5;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    .phone-frame {
+      background: white;
+      min-height: 100vh;
+      position: relative;
+      padding-bottom: 80px;
+    }
+
+    .status-bar {
+      background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+      padding: 12px 20px;
+      color: white;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .nav-bar {
+      background: #1E88E5;
+      padding: 16px 20px;
+      color: white;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 500;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      border-top: 1px solid #E0E0E0;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .tab-item {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 12px;
+      color: #666;
+      cursor: pointer;
+    }
+
+    .tab-item.active {
+      color: #1E88E5;
+    }
+
+    .tab-icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    /* 出发城市选择 */
+    .departure-section {
+      background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+      padding: 16px 20px;
+    }
+
+    .departure-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 8px;
+    }
+
+    .departure-input {
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 24px;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .departure-input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* 搜索栏 */
+    .search-bar {
+      background: white;
+      padding: 16px 20px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: #F5F5F5;
+      border-radius: 24px;
+      padding: 12px 20px;
+    }
+
+    .search-icon {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+
+    .search-input {
+      border: none;
+      background: transparent;
+      flex: 1;
+      font-size: 14px;
+      outline: none;
+    }
+
+    /* 筛选标签 */
+    .filter-tags {
+      display: flex;
+      padding: 0 20px 12px;
+      gap: 12px;
+      background: white;
+    }
+
+    .filter-tag {
+      padding: 8px 20px;
+      background: #F5F5F5;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #666;
+      cursor: pointer;
+      border: none;
+    }
+
+    .filter-tag.active {
+      background: #1E88E5;
+      color: white;
+    }
+
+    /* 距离信息 */
+    .location-info {
+      padding: 12px 20px;
+      background: #E8F5E9;
+      font-size: 12px;
+      color: #2E7D32;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .location-info.hint {
+      background: #FFF3E0;
+      color: #F57C00;
+    }
+
+    /* 滑雪场卡片 */
+    .resort-card {
+      background: white;
+      margin: 16px 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+    }
+
+    .resort-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      position: relative;
+    }
+
+    .resort-info {
+      padding: 16px;
+    }
+
+    .resort-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .resort-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .resort-rating {
+      display: flex;
+      align-items: center;
+      color: #FF9800;
+      font-size: 14px;
+    }
+
+    .resort-location {
+      color: #757575;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .resort-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .resort-price {
+      display: flex;
+      align-items: baseline;
+    }
+
+    .price-value {
+      font-size: 24px;
+      color: #F44336;
+      font-weight: bold;
+    }
+
+    .transport-info {
+      background: #F5F5F5;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .transport-title {
+      font-size: 12px;
+      color: #757575;
+      margin-bottom: 8px;
+    }
+
+    .transport-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .transport-type {
+      color: #1E88E5;
+      font-weight: 500;
+    }
+
+    /* 收藏按钮 */
+    .collect-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #FFF3E0;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #F57C00;
+      cursor: pointer;
+      border: none;
+    }
+
+    .collect-btn.collected {
+      background: #FFEBEE;
+      color: #C62828;
+    }
+
+    /* 页面容器 */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* 用户卡片 */
+    .user-card {
+      background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+      margin: 20px;
+      border-radius: 16px;
+      padding: 32px 24px;
+      color: white;
+    }
+
+    /* 探索页面 */
+    .section-tabs {
+      display: flex;
+      background: white;
+      padding: 12px 0;
+      margin-bottom: 16px;
+    }
+
+    .section-tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      font-size: 14px;
+      color: #666;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+
+    .section-tab.active {
+      color: #1E88E5;
+      border-bottom-color: #1E88E5;
+    }
+
+    /* 评价卡片 */
+    .review-card {
+      background: white;
+      margin: 0 20px 16px;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .review-user {
+      display: flex;
+      margin-bottom: 12px;
+    }
+
+    .review-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    .review-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .review-scores {
+      display: flex;
+      justify-content: space-around;
+      background: #F5F5F5;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .score-item {
+      text-align: center;
+    }
+
+    .score-value {
+      display: block;
+      font-size: 18px;
+      color: #FF9800;
+      font-weight: bold;
+    }
+
+    .score-label {
+      font-size: 11px;
+      color: #9E9E9E;
+    }
+
+    /* 搭子搜索栏 */
+    .partner-search-bar {
+      background: white;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+
+    /* 搭子卡片 */
+    .partner-card {
+      background: white;
+      margin: 0 20px 16px;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .matched-users {
+      background: #E8F5E9;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
+    .matched-title {
+      font-size: 12px;
+      color: #2E7D32;
+      margin-bottom: 8px;
+    }
+
+    .matched-user {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: white;
+      border-radius: 20px;
+      margin-right: 8px;
+    }
+
+    .matched-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+      color: white;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      margin-right: 8px;
+    }
+
+    .badge-indoor {
+      background: #E3F2FD;
+      color: #1976D2;
+    }
+
+    .badge-outdoor {
+      background: #E8F5E9;
+      color: #388E3C;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>📶 5G 🔋</span>
+    </div>
+
+    <!-- 导航栏 -->
+    <div class="nav-bar" id="navTitle">搜索滑雪场</div>
+
+    <!-- 页面1：搜索 -->
+    <div class="page active" id="pageSearch">
+      <div class="departure-section">
+        <div class="departure-label">📍 出发城市</div>
+        <input type="text" class="departure-input" placeholder="输入你的出发城市" id="departureInput">
+      </div>
+
+      <div class="search-bar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" placeholder="搜索目标城市或滑雪场" id="searchInput">
+        </div>
+      </div>
+
+      <div class="filter-tags">
+        <button class="filter-tag active" onclick="filterType('all')">全部</button>
+        <button class="filter-tag" onclick="filterType('indoor')">室内</button>
+        <button class="filter-tag" onclick="filterType('outdoor')">室外</button>
+      </div>
+
+      <div class="location-info hint" id="locationInfo">
+        📍 请输入出发城市查看距离和交通方式
+      </div>
+
+      <div id="resortList"></div>
+    </div>
+
+    <!-- 页面2：探索 -->
+    <div class="page" id="pageExplore">
+      <div class="section-tabs">
+        <div class="section-tab active" onclick="switchSection(0)">滑雪社区</div>
+        <div class="section-tab" onclick="switchSection(1)">找搭子</div>
+      </div>
+
+      <div id="sectionContent"></div>
+    </div>
+
+    <!-- 页面3：我的 -->
+    <div class="page" id="pageProfile">
+      <div class="user-card">
+        <div style="font-size: 48px; margin-bottom: 16px;">🎿</div>
+        <div style="font-size: 24px; font-weight: bold;">滑雪爱好者</div>
+        <div style="font-size: 12px; opacity: 0.8; margin-top: 8px;">点击完善个人信息</div>
+        <div style="display: flex; margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.2);">
+          <div style="flex: 1; text-align: center;">
+            <div style="font-size: 24px; font-weight: bold;">0</div>
+            <div style="font-size: 12px; opacity: 0.8;">评价</div>
+          </div>
+          <div style="flex: 1; text-align: center;">
+            <div style="font-size: 24px; font-weight: bold;">0</div>
+            <div style="font-size: 12px; opacity: 0.8;">发起</div>
+          </div>
+          <div style="flex: 1; text-align: center;">
+            <div style="font-size: 24px; font-weight: bold;">0</div>
+            <div style="font-size: 12px; opacity: 0.8;">粉丝</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab栏 -->
+    <div class="tab-bar">
+      <div class="tab-item active" onclick="switchPage(0)">
+        <div class="tab-icon">🔍</div>
+        <div>搜索</div>
+      </div>
+      <div class="tab-item" onclick="switchPage(1)">
+        <div class="tab-icon">🗺️</div>
+        <div>探索</div>
+      </div>
+      <div class="tab-item" onclick="switchPage(2)">
+        <div class="tab-icon">👤</div>
+        <div>我的</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_KEY = '41f98310392808752b5e9ea1e6bc4776';
+
+    // 滑雪场关键词库
+    const SKI_RESORT_KEYWORDS = [
+      '滑雪场', '滑雪', '冰雪世界', '冰雪', '热雪',
+      '乔波', '融雪', '室内滑雪', '滑雪度假村', '滑雪中心'
+    ];
+
+    // 排除关键词
+    const EXCLUDE_KEYWORDS = [
+      '滑雪装备', '滑雪用品', '滑雪服', '滑雪板',
+      '滑雪培训', '滑雪教练', '滑雪学校',
+      '滑雪租赁', '冰淇淋', '冰激凌', '冰雪食品'
+    ];
+
+    // 从高德API加载滑雪场数据
+    let resorts = [];
+    let isLoading = false;
+      {
+        id: 2,
+        name: '太舞滑雪场',
+        city: '张家口',
+        country: '中国',
+        type: 'outdoor',
+        price: 780,
+        priceUnit: '天',
+        elevation: 2160,
+        trails: 28,
+        rating: 4.6,
+        reviewCount: 1923,
+        season: '11月-3月',
+        latitude: 40.9389,
+        longitude: 115.7583,
+        transportation: [
+          { type: '高铁', duration: '1.5小时', from: '北京北站', detail: '至太子城站' },
+          { type: '自驾', duration: '3小时', from: '北京', detail: '京礼高速' }
+        ]
+      },
+      {
+        id: 3,
+        name: '哈尔滨融创雪世界',
+        city: '哈尔滨',
+        country: '中国',
+        type: 'indoor',
+        price: 468,
+        priceUnit: '4小时',
+        elevation: 0,
+        trails: 8,
+        rating: 4.3,
+        reviewCount: 1456,
+        season: '全年开放',
+        latitude: 45.7732,
+        longitude: 126.6535,
+        transportation: [
+          { type: '飞机', duration: '2.5小时', from: '北京', detail: '至哈尔滨太平机场' },
+          { type: '高铁', duration: '5.5小时', from: '北京', detail: '至哈尔滨西站' }
+        ]
+      },
+      {
+        id: 4,
+        name: '广州融创雪世界',
+        city: '广州',
+        country: '中国',
+        type: 'indoor',
+        price: 598,
+        priceUnit: '4小时',
+        elevation: 0,
+        trails: 6,
+        rating: 4.4,
+        reviewCount: 2341,
+        season: '全年开放',
+        latitude: 23.1815,
+        longitude: 113.2852,
+        transportation: [
+          { type: '飞机', duration: '3小时', from: '北京', detail: '至广州白云机场' }
+        ]
+      },
+      {
+        id: 5,
+        name: '长白山万达滑雪场',
+        city: '白山',
+        country: '中国',
+        type: 'outdoor',
+        price: 980,
+        priceUnit: '天',
+        elevation: 1200,
+        trails: 43,
+        rating: 4.8,
+        reviewCount: 3156,
+        season: '11月-4月',
+        latitude: 41.9125,
+        longitude: 128.0683,
+        transportation: [
+          { type: '飞机', duration: '2小时', from: '北京', detail: '至长白山机场' },
+          { type: '高铁', duration: '7小时', from: '北京', detail: '至长白山站' }
+        ]
+      },
+      {
+        id: 6,
+        name: '新疆丝绸之路滑雪场',
+        city: '乌鲁木齐',
+        country: '中国',
+        type: 'outdoor',
+        price: 468,
+        priceUnit: '天',
+        elevation: 2500,
+        trails: 35,
+        rating: 4.5,
+        reviewCount: 1678,
+        season: '11月-3月',
+        latitude: 43.8256,
+        longitude: 87.6183,
+        transportation: [
+          { type: '飞机', duration: '4小时', from: '北京', detail: '至乌鲁木齐地窝堡机场' }
+        ]
+      },
+      {
+        id: 2,
+        name: '太舞滑雪场',
+        city: '张家口',
+        country: '中国',
+        type: 'outdoor',
+        price: 780,
+        priceUnit: '天',
+        elevation: 2160,
+        trails: 28,
+        rating: 4.6,
+        reviewCount: 1923,
+        season: '11月-3月',
+        transportation: [
+          { type: '高铁', duration: '1.5小时', from: '北京北站', detail: '至太子城站' },
+          { type: '自驾', duration: '3小时', from: '北京', detail: '京礼高速' }
+        ]
+      },
+      {
+        id: 3,
+        name: '哈尔滨融创雪世界',
+        city: '哈尔滨',
+        country: '中国',
+        type: 'indoor',
+        price: 468,
+        priceUnit: '4小时',
+        elevation: 0,
+        trails: 8,
+        rating: 4.3,
+        reviewCount: 1456,
+        season: '全年开放',
+        transportation: [
+          { type: '飞机', duration: '2.5小时', from: '北京', detail: '至哈尔滨太平机场' },
+          { type: '高铁', duration: '5.5小时', from: '北京', detail: '至哈尔滨西站' }
+        ]
+      },
+      {
+        id: 4,
+        name: '广州融创雪世界',
+        city: '广州',
+        country: '中国',
+        type: 'indoor',
+        price: 598,
+        priceUnit: '4小时',
+        elevation: 0,
+        trails: 6,
+        rating: 4.4,
+        reviewCount: 2341,
+        season: '全年开放',
+        transportation: [
+          { type: '飞机', duration: '3小时', from: '北京', detail: '至广州白云机场' }
+        ]
+      },
+      {
+        id: 7,
+        name: '二世古滑雪场',
+        city: '二世古',
+        country: '日本',
+        type: 'outdoor',
+        price: 800,
+        priceUnit: '天',
+        elevation: 1308,
+        trails: 61,
+        rating: 4.9,
+        reviewCount: 5623,
+        season: '12月-4月',
+        latitude: 42.8648,
+        longitude: 140.6795,
+        transportation: [
+          { type: '飞机', duration: '4小时', from: '北京', detail: '至新千岁机场，转巴士2.5小时' }
+        ]
+      },
+      {
+        id: 8,
+        name: '苗场滑雪场',
+        city: '汤泽町',
+        country: '日本',
+        type: 'outdoor',
+        price: 650,
+        priceUnit: '天',
+        elevation: 1789,
+        trails: 34,
+        rating: 4.6,
+        reviewCount: 3421,
+        season: '12月-4月',
+        latitude: 36.7728,
+        longitude: 138.8625,
+        transportation: [
+          { type: '飞机', duration: '3小时', from: '上海', detail: '至东京成田，转JR2小时' }
+        ]
+      },
+      {
+        id: 9,
+        name: '富士天高原滑雪场',
+        city: '富士吉田',
+        country: '日本',
+        type: 'outdoor',
+        price: 520,
+        priceUnit: '天',
+        elevation: 1400,
+        trails: 14,
+        rating: 4.4,
+        reviewCount: 2156,
+        season: '12月-3月',
+        latitude: 35.4972,
+        longitude: 138.7467,
+        transportation: [
+          { type: '飞机', duration: '3小时', from: '北京', detail: '至东京羽田，转巴士2.5小时' }
+        ]
+      },
+      {
+        id: 10,
+        name: '采尔马特滑雪场',
+        city: '采尔马特',
+        country: '瑞士',
+        type: 'outdoor',
+        price: 1200,
+        priceUnit: '天',
+        elevation: 3883,
+        trails: 360,
+        rating: 5.0,
+        reviewCount: 8934,
+        season: '11月-5月',
+        latitude: 46.0171,
+        longitude: 7.7483,
+        transportation: [
+          { type: '飞机', duration: '11小时', from: '北京', detail: '至苏黎世，转火车3.5小时' }
+        ]
+      },
+      {
+        id: 11,
+        name: '韦尔比耶滑雪场',
+        city: '韦尔比耶',
+        country: '瑞士',
+        type: 'outdoor',
+        price: 1100,
+        priceUnit: '天',
+        elevation: 3330,
+        trails: 410,
+        rating: 4.8,
+        reviewCount: 6789,
+        season: '12月-4月',
+        latitude: 46.0936,
+        longitude: 7.2269,
+        transportation: [
+          { type: '飞机', duration: '11小时', from: '北京', detail: '至日内瓦，转火车2小时' }
+        ]
+      },
+      {
+        id: 12,
+        name: '夏蒙尼滑雪场',
+        city: '夏蒙尼',
+        country: '法国',
+        type: 'outdoor',
+        price: 950,
+        priceUnit: '天',
+        elevation: 3842,
+        trails: 150,
+        rating: 4.7,
+        reviewCount: 7234,
+        season: '12月-4月',
+        latitude: 45.9237,
+        longitude: 6.8694,
+        transportation: [
+          { type: '飞机', duration: '11小时', from: '北京', detail: '至日内瓦，转大巴1小时' }
+        ]
+      },
+      {
+        id: 13,
+        name: '库尔舍瓦勒滑雪场',
+        city: '库尔舍瓦勒',
+        country: '法国',
+        type: 'outdoor',
+        price: 1050,
+        priceUnit: '天',
+        elevation: 2738,
+        trails: 600,
+        rating: 4.7,
+        reviewCount: 5432,
+        season: '12月-4月',
+        latitude: 45.4189,
+        longitude: 6.6339,
+        transportation: [
+          { type: '飞机', duration: '11小时', from: '北京', detail: '至里昂，转大巴2小时' }
+        ]
+      },
+      {
+        id: 14,
+        name: '范尔滑雪场',
+        city: '范尔',
+        country: '美国',
+        type: 'outdoor',
+        price: 1350,
+        priceUnit: '天',
+        elevation: 3527,
+        trails: 193,
+        rating: 4.8,
+        reviewCount: 9876,
+        season: '11月-4月',
+        latitude: 39.6403,
+        longitude: -106.3742,
+        transportation: [
+          { type: '飞机', duration: '15小时', from: '北京', detail: '至丹佛，转大巴2小时' }
+        ]
+      },
+      {
+        id: 15,
+        name: '惠斯勒黑梳山滑雪场',
+        city: '惠斯勒',
+        country: '加拿大',
+        type: 'outdoor',
+        price: 1180,
+        priceUnit: '天',
+        elevation: 2284,
+        trails: 200,
+        rating: 4.9,
+        reviewCount: 8765,
+        season: '11月-5月',
+        latitude: 50.1155,
+        longitude: -122.9542,
+        transportation: [
+          { type: '飞机', duration: '12小时', from: '北京', detail: '至温哥华，转大巴2小时' }
+        ]
+      }
+    ];
+
+    // 用户评价数据（带AI打分）
+    const reviews = [
+      {
+        id: 1,
+        user: { name: '雪霸天', type: '单板', level: '艺高人胆大', experience: '5个雪季' },
+        resortId: 1,
+        resortName: '万龙滑雪场',
+        rating: 5,
+        content: '万龙不愧是顶级雪场，雪质超好，中级道特别长！唯一的缺点就是周末人太多了，建议错峰去。附上我的滑雪视频，求大神指点！',
+        aiScore: 4.8,
+        avgScore: 4.7,
+        date: '2025-01-15',
+        mediaType: 'video'
+      },
+      {
+        id: 2,
+        user: { name: '小白爱滑雪', type: '双板', level: '小白', experience: '1个雪季' },
+        resortId: 1,
+        resortName: '万龙滑雪场',
+        rating: 4,
+        content: '第一次来万龙，作为小白有点害怕，教练很耐心。高级道太吓人了😅，还在魔毯区练习中。拍了照片记录一下！',
+        aiScore: 4.2,
+        avgScore: 4.3,
+        date: '2025-01-10',
+        mediaType: 'image'
+      }
+    ];
+
+    // 搭子数据（带智能匹配）
+    const partners = [
+      {
+        id: 1,
+        user: { name: '北京单板小伙', type: '单板', level: '有点水平但不多', gender: '男', age: 26, location: '北京' },
+        targetResort: '万龙滑雪场',
+        plannedDate: '2025-02-15',
+        description: '计划2月中旬去万龙刷2天，找个水平相当的小伙伴一起拍照拍视频！我可以开车去，AA油费过路费。',
+        tags: ['可开车', '喜欢拍照', 'AA制'],
+        matchedUsers: [
+          { name: '滑雪达人', avatar: '🏂' },
+          { name: '板仔小王', avatar: '🏂' }
+        ]
+      },
+      {
+        id: 2,
+        user: { name: '双板小姐姐', type: '双板', level: '艺高人胆大', gender: '女', age: 24, location: '上海' },
+        targetResort: '二世古滑雪场',
+        plannedDate: '2025-03-10',
+        description: '3月去二世古计划玩5天，找个女生搭子一起住酒店可以省点钱～我是双板，水平差不多的一起出发！',
+        tags: ['女生专属', '可拼房', '日本行'],
+        matchedUsers: [
+          { name: '雪国少女', avatar: '🎿' }
+        ]
+      }
+    ];
+
+    let currentFilter = 'all';
+    let currentSection = 0;
+    let departureCity = '';
+    let departureCityCoords = null;
+    let searchKeyword = '';
+
+    // 判断是否是滑雪场
+    function isSkiResortByName(name) {
+      if (!name) return { isSkiResort: false, confidence: 0, reason: '名称为空' };
+
+      // 排除
+      for (const keyword of EXCLUDE_KEYWORDS) {
+        if (name.includes(keyword)) {
+          return { isSkiResort: false, confidence: 0, reason: `排除：${keyword}` };
+        }
+      }
+
+      // 匹配
+      let matched = [];
+      for (const keyword of SKI_RESORT_KEYWORDS) {
+        if (name.toLowerCase().includes(keyword.toLowerCase())) {
+          matched.push(keyword);
+        }
+      }
+
+      if (matched.length > 0) {
+        let confidence = 0.5;
+        if (name.includes('滑雪场') || name.includes('滑雪中心')) confidence = 0.95;
+        else if (name.includes('冰雪世界') || name.includes('热雪奇迹') || name.includes('乔波')) confidence = 0.85;
+        else confidence = 0.6;
+
+        return { isSkiResort: true, confidence: confidence, reason: `匹配：${matched.join(', ')}` };
+      }
+
+      return { isSkiResort: false, confidence: 0, reason: '无匹配关键词' };
+    }
+
+    // 计算两点间距离（米）
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371000;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return Math.round(R * c);
+    }
+
+    // 去重滑雪场（基于坐标距离）
+    function deduplicateSkiResorts(pois) {
+      const unique = [];
+
+      for (const poi of pois) {
+        let isDup = false;
+        const [lon1, lat1] = poi.location.split(',').map(parseFloat);
+
+        for (const existing of unique) {
+          const [lon2, lat2] = existing.location.split(',').map(parseFloat);
+          const dist = calculateDistance(lat1, lon1, lat2, lon2);
+
+          if (dist < 100) {
+            isDup = true;
+            break;
+          }
+        }
+
+        if (!isDup) unique.push(poi);
+      }
+
+      return unique;
+    }
+
+    // 从高德API搜索滑雪场
+    async function searchSkiResortsFromAPI(city) {
+      if (isLoading) return;
+      isLoading = true;
+
+      showLoading(true);
+
+      try {
+        const allPois = new Map();
+
+        // 多关键词搜索
+        for (const keyword of SKI_RESORT_KEYWORDS) {
+          try {
+            const url = `https://restapi.amap.com/v5/place/text?key=${API_KEY}&keywords=${encodeURIComponent(keyword)}&city=${city}&citylimit=true&offset=20&page=1&extensions=all`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.pois) {
+              data.pois.forEach(poi => allPois.set(poi.id, poi));
+            }
+          } catch (e) {
+            console.warn(`关键词"${keyword}"失败:`, e);
+          }
+        }
+
+        const poisArray = Array.from(allPois.values());
+
+        // 智能筛选
+        const filtered = [];
+        for (const poi of poisArray) {
+          const check = isSkiResortByName(poi.name);
+          if (check.isSkiResort && check.confidence >= 0.5) {
+            filtered.push(poi);
+          }
+        }
+
+        // 去重
+        const unique = deduplicateSkiResorts(filtered);
+
+        // 转换为滑雪场格式
+        resorts = unique.map(poi => {
+          const [longitude, latitude] = poi.location.split(',').map(parseFloat);
+          const type = poi.name && (poi.name.includes('室内') || poi.name.includes('融创') || poi.name.includes('乔波') || poi.name.includes('冰雪世界')) ? 'indoor' : 'outdoor';
+
+          return {
+            id: poi.id,
+            name: poi.name,
+            city: poi.cityname || poi.adname || city,
+            country: '中国',
+            type: type,
+            price: type === 'indoor' ? 468 : 680,
+            priceUnit: type === 'indoor' ? '4小时' : '天',
+            elevation: 0,
+            trails: 0,
+            rating: 4.5,
+            reviewCount: 0,
+            season: type === 'indoor' ? '全年开放' : '11月-3月',
+            latitude: latitude,
+            longitude: longitude,
+            address: poi.address || '',
+            telephone: poi.tel || '',
+            poi: poi
+          };
+        });
+
+        console.log(`✅ 搜索完成：原始${poisArray.length}条 → 筛选${filtered.length}条 → 去重${unique.length}条`);
+        showLoading(false);
+        renderResorts();
+      } catch (error) {
+        console.error('搜索失败:', error);
+        showLoading(false);
+        alert('搜索失败：' + error.message);
+      } finally {
+        isLoading = false;
+      }
+    }
+
+    // 显示/隐藏加载状态
+    function showLoading(show) {
+      const locationInfo = document.getElementById('locationInfo');
+      if (show) {
+        locationInfo.innerHTML = '⏳ 正在搜索附近的滑雪场...';
+        locationInfo.classList.remove('hint');
+      } else {
+        locationInfo.innerHTML = '✅ 搜索完成';
+      }
+    }
+
+    // 获取城市坐标（高德地理编码）
+    async function getCityCoords(cityName) {
+      try {
+        const url = `https://restapi.amap.com/v3/geocode/geo?key=${API_KEY}&address=${encodeURIComponent(cityName)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.geocodes && data.geocodes.length > 0) {
+          const [longitude, latitude] = data.geocodes[0].location.split(',').map(parseFloat);
+          return { latitude, longitude, city: data.geocodes[0].city };
+        }
+      } catch (error) {
+        console.error('获取城市坐标失败:', error);
+      }
+      return null;
+    }
+
+    // 计算距离（公里）
+    function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+      const dist = calculateDistance(lat1, lon1, lat2, lon2);
+      return Math.round(dist / 1000);
+    }
+
+    // 渲染滑雪场列表
+    function renderResorts() {
+      const container = document.getElementById('resortList');
+      let filtered = [...resorts];
+
+      // 如果没有数据，显示提示
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 60px 20px; color: #9E9E9E;">
+            <div style="font-size: 64px; margin-bottom: 16px;">🎿</div>
+            <div style="font-size: 16px; color: #666; margin-bottom: 8px;">输入出发城市搜索附近的滑雪场</div>
+            <div style="font-size: 12px;">支持：北京、上海、深圳、广州、哈尔滨等</div>
+          </div>
+        `;
+        return;
+      }
+
+      // 1. 根据类型筛选
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(r => r.type === currentFilter);
+      }
+
+      // 2. 根据搜索关键词筛选
+      if (searchKeyword) {
+        filtered = filtered.filter(r =>
+          r.city.toLowerCase().includes(searchKeyword) ||
+          r.country.toLowerCase().includes(searchKeyword) ||
+          r.name.toLowerCase().includes(searchKeyword)
+        );
+      }
+
+      // 3. 如果有出发城市坐标，按距离排序
+      if (departureCityCoords) {
+        filtered = filtered.map(r => {
+          if (r.latitude && r.longitude) {
+            const distanceKm = calculateDistanceKm(
+              departureCityCoords.latitude,
+              departureCityCoords.longitude,
+              r.latitude,
+              r.longitude
+            );
+            return { ...r, distance: distanceKm };
+          } else {
+            return { ...r, distance: 999999 };
+          }
+        }).sort((a, b) => a.distance - b.distance);
+      }
+
+      // 4. 渲染结果
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 60px 20px; color: #9E9E9E;"><div style="font-size: 64px; margin-bottom: 16px;">🔍</div><div>没有找到相关滑雪场</div><div style="font-size: 12px; margin-top: 8px;">试试搜索其他城市或调整筛选条件</div></div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(resort => `
+        <div class="resort-card" onclick="showResortDetail(${resort.id})">
+          <div class="resort-image" style="background: linear-gradient(135deg, ${getColor(resort.id)} 0%, ${getColor(resort.id + 1)} 100%);">
+            <span style="position: absolute; top: 12px; left: 12px; padding: 6px 16px; border-radius: 16px; font-size: 11px; color: white; ${resort.type === 'indoor' ? 'background: rgba(33, 150, 243, 0.9);' : 'background: rgba(76, 175, 80, 0.9);'}">
+              ${resort.type === 'indoor' ? '室内' : '室外'}
+            </span>
+            ${resort.distance ? `<span style="position: absolute; bottom: 12px; left: 12px; padding: 6px 16px; border-radius: 16px; font-size: 11px; color: white; background: rgba(0, 0, 0, 0.6);">📍 距你 ${resort.distance}km</span>` : ''}
+          </div>
+          <div class="resort-info">
+            <div class="resort-header">
+              <div class="resort-name">${resort.name}</div>
+              <div class="resort-rating">
+                <span class="star">⭐</span>
+                ${resort.rating}
+              </div>
+            </div>
+            <div class="resort-location">📍 ${resort.city}, ${resort.country}</div>
+            <div class="resort-meta">
+              <span>⛰️ 海拔 ${resort.elevation}m</span>
+              <span>🎿 ${resort.trails}条雪道</span>
+            </div>
+            ${departureCity ? `
+              <div class="transport-info">
+                <div class="transport-title">🚗 从${departureCity}前往：</div>
+                ${resort.transportation.map(t => `
+                  <div class="transport-item">
+                    <span class="transport-type">${t.type}</span>
+                    <span>${t.duration}</span>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+            <div class="resort-price">
+              <span class="price-value">¥${resort.price}</span>
+              <span style="font-size: 12px; color: #9E9E9E;">/${resort.priceUnit}</span>
+              <button class="collect-btn" style="margin-left: auto;" onclick="event.stopPropagation(); this.classList.toggle('collected');">
+                <span>🤍</span> 收藏
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getColor(id) {
+      const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#fee140'];
+      return colors[id % colors.length];
+    }
+
+    function filterType(type) {
+      currentFilter = type;
+      document.querySelectorAll('.filter-tag').forEach((btn, index) => {
+        const types = ['all', 'indoor', 'outdoor'];
+        btn.classList.toggle('active', types[index] === type);
+      });
+      renderResorts();
+    }
+
+    function switchPage(index) {
+      const pages = ['pageSearch', 'pageExplore', 'pageProfile'];
+      const titles = ['搜索滑雪场', '探索', '我的'];
+
+      document.querySelectorAll('.page').forEach((page, i) => {
+        page.classList.toggle('active', i === index);
+      });
+      document.querySelectorAll('.tab-item').forEach((tab, i) => {
+        tab.classList.toggle('active', i === index);
+      });
+      document.getElementById('navTitle').textContent = titles[index];
+
+      if (index === 1) {
+        renderSection();
+      }
+    }
+
+    function switchSection(index) {
+      currentSection = index;
+      document.querySelectorAll('.section-tab').forEach((tab, i) => {
+        tab.classList.toggle('active', i === index);
+      });
+      renderSection();
+    }
+
+    function renderSection() {
+      const container = document.getElementById('sectionContent');
+
+      if (currentSection === 0) {
+        // 滑雪社区
+        container.innerHTML = reviews.map(r => `
+          <div class="review-card">
+            <div class="review-user">
+              <div class="review-avatar">${r.user.name[0]}</div>
+              <div class="review-user-info">
+                <div style="font-weight: 500;">${r.user.name}</div>
+                <div style="font-size: 11px; color: #666;">${r.user.type} · ${r.user.level} · ${r.user.experience}</div>
+              </div>
+            </div>
+            <div style="font-size: 12px; color: #1E88E5; margin-bottom: 8px;">🎿 ${r.resortName}</div>
+            <div class="review-content">${r.content}</div>
+            <div class="review-scores">
+              <div class="score-item">
+                <span class="score-value">🤖 ${r.aiScore}</span>
+                <span class="score-label">AI评分</span>
+              </div>
+              <div class="score-item">
+                <span class="score-value">⭐ ${r.avgScore}</span>
+                <span class="score-label">网友评分</span>
+              </div>
+            </div>
+            <div style="font-size: 12px; color: #9E9E9E; padding-top: 12px; border-top: 1px solid #F5F5F5;">
+              ${r.date} · ${r.mediaType === 'video' ? '📹 视频' : '📷 图片'} · 👍 ${Math.floor(Math.random() * 500)}
+            </div>
+          </div>
+        `).join('');
+      } else {
+        // 找搭子
+        container.innerHTML = `
+          <div class="partner-search-bar">
+            <div class="search-box" style="margin-bottom: 12px;">
+              <span class="search-icon">🔍</span>
+              <input type="text" class="search-input" placeholder="搜索滑雪场、出发地">
+            </div>
+            <div class="filter-tags" style="padding: 0;">
+              <button class="filter-tag active">最新</button>
+              <button class="filter-tag">滑雪场</button>
+              <button class="filter-tag">出发地</button>
+            </div>
+          </div>
+          ${partners.map(p => `
+            <div class="partner-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center;">
+                  <div class="review-avatar" style="width: 56px; height: 56px; font-size: 24px;">${p.user.name[0]}</div>
+                  <div>
+                    <div style="font-weight: 500;">${p.user.name}</div>
+                    <div style="font-size: 12px; color: #666;">${p.user.gender} · ${p.user.age}岁 · ${p.user.type}</div>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+                <div style="flex: 1; background: #F5F5F5; padding: 12px; border-radius: 8px;">
+                  <div style="font-size: 11px; color: #9E9E9E; margin-bottom: 4px;">🎿 目标雪场</div>
+                  <div style="font-size: 13px; font-weight: 500;">${p.targetResort}</div>
+                </div>
+                <div style="flex: 1; background: #F5F5F5; padding: 12px; border-radius: 8px;">
+                  <div style="font-size: 11px; color: #9E9E9E; margin-bottom: 4px;">📅 计划日期</div>
+                  <div style="font-size: 13px; font-weight: 500;">${p.plannedDate}</div>
+                </div>
+              </div>
+              <div style="font-size: 14px; line-height: 1.6; margin-bottom: 12px;">${p.description}</div>
+              <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                ${p.tags.map(t => `<span class="badge badge-outdoor">${t}</span>`).join('')}
+              </div>
+              ${p.matchedUsers && p.matchedUsers.length > 0 ? `
+                <div class="matched-users">
+                  <div class="matched-title">💡 匹配到${p.matchedUsers.length}位行程相近的雪友</div>
+                  ${p.matchedUsers.map(u => `
+                    <div class="matched-user">
+                      <span style="font-size: 24px;">${u.avatar}</span>
+                      <span style="font-size: 12px;">${u.name}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
+              <button class="btn btn-primary" style="width: 100%;">联系TA</button>
+            </div>
+          `).join('')}
+        `;
+      }
+    }
+
+    function showResortDetail(id) {
+      const resort = resorts.find(r => r.id === id);
+      if (!resort) return;
+
+      alert(`🎿 ${resort.name}\n\n📍 ${resort.city}, ${resort.country}\n⭐ ${resort.rating} (${resort.reviewCount}条评价)\n💰 ¥${resort.price}/${resort.priceUnit}\n⛰️ 海拔 ${resort.elevation}m · ${resort.trails}条雪道\n📅 雪季：${resort.season}\n\n（完整功能请在微信开发者工具中查看）`);
+    }
+
+    // 出发城市输入 - 使用高德API
+    let searchTimeout;
+    document.getElementById('departureInput').addEventListener('input', async (e) => {
+      const inputCity = e.target.value.trim();
+      const locationInfo = document.getElementById('locationInfo');
+
+      if (!inputCity) {
+        departureCity = '';
+        departureCityCoords = null;
+        locationInfo.textContent = '📍 请输入出发城市查看距离和交通方式';
+        locationInfo.classList.add('hint');
+        renderResorts();
+        return;
+      }
+
+      // 防抖：等待用户停止输入
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(async () => {
+        locationInfo.textContent = `⏳ 正在搜索"${inputCity}"附近的滑雪场...`;
+        locationInfo.classList.remove('hint');
+
+        // 获取城市坐标
+        const coords = await getCityCoords(inputCity);
+
+        if (coords) {
+          departureCityCoords = coords;
+          locationInfo.textContent = `📍 从${coords.city || inputCity}出发，正在搜索滑雪场...`;
+
+          // 搜索滑雪场
+          await searchSkiResortsFromAPI(coords.city || inputCity);
+
+          locationInfo.textContent = `📍 从${coords.city || inputCity}出发，找到${resorts.length}个滑雪场`;
+        } else {
+          locationInfo.textContent = `⚠️ 未找到"${inputCity}"，请检查城市名称`;
+        }
+      }, 500);
+    });
+
+    // 搜索功能
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      searchKeyword = e.target.value.toLowerCase().trim();
+      renderResorts();
+    });
+
+    // 初始化
+    renderResorts();
+  </script>
+</body>
+</html>

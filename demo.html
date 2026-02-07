@@ -1,0 +1,1991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>滑雪场助手</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #F5F5F5;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    .phone-frame {
+      background: white;
+      min-height: 100vh;
+      position: relative;
+      padding-bottom: 80px;
+    }
+
+    /* 导航栏 */
+    .nav-bar {
+      background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+      padding: 16px 20px;
+      color: white;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 500;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    /* 搜索区域 */
+    .search-section {
+      background: white;
+      padding: 16px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: #F5F5F5;
+      border-radius: 24px;
+      padding: 12px 20px;
+    }
+
+    .search-icon {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+
+    .search-input {
+      border: none;
+      background: transparent;
+      flex: 1;
+      font-size: 15px;
+      outline: none;
+    }
+
+    /* 筛选标签 */
+    .filter-tags {
+      display: flex;
+      padding: 12px 20px;
+      gap: 12px;
+      background: white;
+      border-bottom: 1px solid #F0F0F0;
+    }
+
+    .filter-tag {
+      padding: 8px 20px;
+      background: #F5F5F5;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #666;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+    }
+
+    .filter-tag.active {
+      background: #1E88E5;
+      color: white;
+    }
+
+    /* 状态提示 */
+    .status-bar {
+      padding: 12px 20px;
+      background: #E8F5E9;
+      font-size: 13px;
+      color: #2E7D32;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 滑雪场卡片 */
+    .resort-card {
+      background: white;
+      margin: 16px 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .resort-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .resort-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      position: relative;
+    }
+
+    .resort-type-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 11px;
+      color: white;
+      font-weight: 500;
+    }
+
+    .badge-indoor {
+      background: rgba(33, 150, 243, 0.9);
+    }
+
+    .badge-outdoor {
+      background: rgba(76, 175, 80, 0.9);
+    }
+
+    .resort-rank {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      padding: 6px 12px;
+      border-radius: 12px;
+      background: rgba(255, 193, 7, 0.95);
+      color: #333;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .resort-info {
+      padding: 16px;
+    }
+
+    .resort-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .resort-name {
+      font-size: 17px;
+      font-weight: bold;
+      color: #333;
+      flex: 1;
+    }
+
+    .resort-location {
+      font-size: 12px;
+      color: #9E9E9E;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .resort-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .resort-stats {
+      display: flex;
+      justify-content: space-around;
+      background: #F9F9F9;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1E88E5;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #9E9E9E;
+      margin-top: 2px;
+    }
+
+    .resort-price {
+      display: flex;
+      align-items: baseline;
+      margin-top: 10px;
+    }
+
+    .price-value {
+      font-size: 22px;
+      color: #F44336;
+      font-weight: bold;
+    }
+
+    .price-unit {
+      font-size: 12px;
+      color: #9E9E9E;
+      margin-left: 4px;
+    }
+
+    .favorite-btn {
+      margin-left: auto;
+      padding: 8px 16px;
+      background: #F5F5F5;
+      border: none;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.3s;
+    }
+
+    .favorite-btn.active {
+      background: #FFEBEE;
+      color: #C62828;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #9E9E9E;
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    /* 加载状态 */
+    .loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid #F5F5F5;
+      border-top-color: #1E88E5;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* 详情弹窗 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.active {
+      display: block;
+    }
+
+    .modal-content {
+      background: white;
+      margin: 20px;
+      border-radius: 16px;
+      overflow: hidden;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      position: relative;
+      height: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .detail-section {
+      margin-bottom: 20px;
+    }
+
+    .detail-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #F5F5F5;
+      font-size: 14px;
+    }
+
+    .detail-label {
+      color: #666;
+    }
+
+    .detail-value {
+      color: #333;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <!-- 导航栏 -->
+    <div class="nav-bar">滑雪场助手</div>
+
+    <!-- 搜索区域 -->
+    <div class="search-section">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索城市、省份或滑雪场">
+      </div>
+    </div>
+
+    <!-- 筛选标签 -->
+    <div class="filter-tags">
+      <button class="filter-tag active" data-type="all">全部</button>
+      <button class="filter-tag" data-type="outdoor">室外</button>
+      <button class="filter-tag" data-type="indoor">室内</button>
+    </div>
+
+    <!-- 状态提示 -->
+    <div class="status-bar" id="statusBar">
+      🏂 国内热门滑雪场
+    </div>
+
+    <!-- 滑雪场列表 -->
+    <div id="resortList"></div>
+
+    <!-- 详情弹窗 -->
+    <div class="modal-overlay" id="detailModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // 领域层 - 实体和值对象
+    // ========================================
+
+    /**
+     * 位置值对象
+     */
+    class Location {
+      constructor(country, province, city, address, coordinates) {
+        this.country = country;
+        this.province = province;
+        this.city = city;
+        this.address = address;
+        this.coordinates = coordinates; // { lat, lng }
+      }
+
+      get fullName() {
+        return `${this.country} ${this.province} ${this.city}`;
+      }
+    }
+
+    /**
+     * 价格值对象
+     */
+    class Price {
+      constructor(min, max, unit) {
+        this.min = min;
+        this.max = max;
+        this.unit = unit; // '天' | '4小时' | '次'
+      }
+
+      get displayText() {
+        if (this.min === this.max) {
+          return `¥${this.min}/${this.unit}`;
+        }
+        return `¥${this.min}-${this.max}/${this.unit}`;
+      }
+    }
+
+    /**
+     * 设施值对象
+     */
+    class Facilities {
+      constructor(trails, elevation, lifts) {
+        this.trails = trails; // { total, beginner, intermediate, advanced }
+        this.elevation = elevation; // { min, max, drop }
+        this.lifts = lifts;
+      }
+
+      get trailDistribution() {
+        const { total, beginner, intermediate, advanced } = this.trails;
+        if (total === 0) return '暂无数据';
+        return `初级${beginner}条 中级${intermediate}条 高级${advanced}条`;
+      }
+    }
+
+    /**
+     * 社交信息值对象
+     */
+    class SocialInfo {
+      constructor(popularityScore, favoriteCount, shareCount, rating) {
+        this.popularityScore = popularityScore; // 综合人气评分
+        this.favoriteCount = favoriteCount;
+        this.shareCount = shareCount;
+        this.rating = rating;
+      }
+    }
+
+    /**
+     * 滑雪场聚合根
+     */
+    class SkiResort {
+      constructor(data) {
+        this.id = data.id;
+        this.name = data.name;
+        this.nameEn = data.nameEn || '';
+
+        // 位置信息
+        this.location = new Location(
+          data.country,
+          data.province,
+          data.city,
+          data.address,
+          data.coordinates
+        );
+
+        // 类型
+        this.type = data.type; // 'indoor' | 'outdoor'
+
+        // 营业信息
+        this.openTime = data.openTime || '09:00-17:00';
+        this.season = data.season || (this.type === 'indoor' ? '全年开放' : '11月-3月');
+        this.ticketPrice = new Price(
+          data.priceMin || data.price || 0,
+          data.priceMax || data.price || 0,
+          data.priceUnit || '天'
+        );
+
+        // 设施
+        this.facilities = new Facilities(
+          data.trails || { total: 0, beginner: 0, intermediate: 0, advanced: 0 },
+          data.elevation || { min: 0, max: 0, drop: 0 },
+          data.lifts || 0
+        );
+
+        // 社交
+        this.social = new SocialInfo(
+          data.popularityScore || 0,
+          data.favoriteCount || 0,
+          data.shareCount || 0,
+          data.rating || 4.5
+        );
+
+        // 距离（动态计算）
+        this.distance = data.distance || null; // 单位：km
+
+        // 数据来源
+        this.source = data.source || 'preset'; // 'preset' | 'amap'
+
+        // 原始POI数据（如果来自高德）
+        this.poi = data.poi || null;
+      }
+
+      // 判断是否是室内滑雪场
+      isIndoor() {
+        return this.type === 'indoor';
+      }
+
+      // 判断是否是室外滑雪场
+      isOutdoor() {
+        return this.type === 'outdoor';
+      }
+
+      // 获取距离文本
+      getDistanceText() {
+        if (!this.distance) return '';
+        if (this.distance < 1) {
+          return `${Math.round(this.distance * 1000)}m`;
+        }
+        return `${Math.round(this.distance)}km`;
+      }
+    }
+
+    // ========================================
+    // 应用服务层
+    // ========================================
+
+    /**
+     * 搜索服务 - 负责搜索相关度计算（逻辑内聚）
+     */
+    class SearchService {
+      /**
+       * 计算搜索相关度（综合指标）
+       * 当前策略：距离权重较高
+       * 后续可扩展：名称匹配度、人气评分等
+       */
+      static calculateRelevance(resort, searchContext) {
+        const factors = [];
+
+        // 因子1：距离（权重0.6）
+        if (searchContext.userLocation && resort.distance !== null) {
+          const distanceScore = Math.max(0, 1 - resort.distance / 500); // 500km内线性衰减
+          factors.push({ name: 'distance', score: distanceScore, weight: 0.6 });
+        }
+
+        // 因子2：名称匹配度（权重0.3）
+        if (searchContext.keyword && resort.name.includes(searchContext.keyword)) {
+          factors.push({ name: 'nameMatch', score: 1, weight: 0.3 });
+        } else if (searchContext.keyword) {
+          factors.push({ name: 'nameMatch', score: 0, weight: 0.3 });
+        }
+
+        // 因子3：人气评分（权重0.1）
+        const popularityScore = resort.social.popularityScore / 100;
+        factors.push({ name: 'popularity', score: popularityScore, weight: 0.1 });
+
+        // 计算加权总分
+        let totalScore = 0;
+        let totalWeight = 0;
+
+        factors.forEach(factor => {
+          totalScore += factor.score * factor.weight;
+          totalWeight += factor.weight;
+        });
+
+        return {
+          score: totalWeight > 0 ? totalScore / totalWeight : 0,
+          factors: factors
+        };
+      }
+    }
+
+    /**
+     * 排序服务 - 负责人气排序（逻辑内聚）
+     */
+    class RankingService {
+      /**
+       * 计算人气评分（综合指标）
+       * 当前策略：搜索量为主
+       * 后续可扩展：打卡量、评论量、收藏量等
+       */
+      static calculatePopularityScore(resort) {
+        const factors = {
+          searchVolume: resort.social.favoriteCount * 1.0, // 搜索量/收藏量
+          shareCount: resort.social.shareCount * 0.5,     // 分享数
+          rating: resort.social.rating * 10               // 评分
+        };
+
+        // 综合计算（后续可调整权重）
+        const score = factors.searchVolume + factors.shareCount + factors.rating;
+
+        return Math.round(score * 10) / 10; // 保留1位小数
+      }
+    }
+
+    // ========================================
+    // 基础设施层
+    // ========================================
+
+    /**
+     * 高德地图仓库
+     */
+    class AmapRepository {
+      constructor() {
+        this.apiKey = '41f98310392808752b5e9ea1e6bc4776';
+        this.poiType = '080107'; // 滑雪场分类代码
+      }
+
+      /**
+       * 搜索滑雪场（使用POI分类代码）
+       */
+      async searchSkiResorts(city) {
+        try {
+          const url = `https://restapi.amap.com/v5/place/text?key=${this.apiKey}&keywords=滑雪场&types=${this.poiType}&city=${city}&citylimit=true&offset=50&page=1&extensions=all`;
+
+          const response = await fetch(url);
+          const data = await response.json();
+
+          if (data.pois) {
+            return data.pois.map(poi => this.transformToSkiResort(poi, city));
+          }
+
+          return [];
+        } catch (error) {
+          console.error('高德API搜索失败:', error);
+          throw error;
+        }
+      }
+
+      /**
+       * 地理编码（城市 → 坐标）
+       */
+      async geocode(city) {
+        try {
+          const url = `https://restapi.amap.com/v3/geocode/geo?key=${this.apiKey}&address=${encodeURIComponent(city)}`;
+          const response = await fetch(url);
+          const data = await response.json();
+
+          if (data.geocodes && data.geocodes.length > 0) {
+            const [longitude, latitude] = data.geocodes[0].location.split(',').map(parseFloat);
+            return {
+              longitude,
+              latitude,
+              city: data.geocodes[0].city
+            };
+          }
+
+          return null;
+        } catch (error) {
+          console.error('地理编码失败:', error);
+          return null;
+        }
+      }
+
+      /**
+       * 将高德POI转换为滑雪场实体
+       */
+      transformToSkiResort(poi, city) {
+        const [longitude, latitude] = poi.location.split(',').map(parseFloat);
+
+        // 判断室内/室外（基于高德标签和名称）
+        let type = 'outdoor';
+        if (poi.type === '080107') {
+          // 根据名称判断
+          const indoorKeywords = ['室内', '融创', '乔波', '冰雪世界', '热雪奇迹', '雪乐山'];
+          type = indoorKeywords.some(k => poi.name.includes(k)) ? 'indoor' : 'outdoor';
+        }
+
+        return new SkiResort({
+          id: poi.id,
+          name: poi.name,
+          nameEn: '',
+          country: '中国',
+          province: poi.pname || '',
+          city: poi.cityname || city,
+          address: poi.address || '',
+          coordinates: { lat: latitude, lng: longitude },
+          type: type,
+          openTime: '09:00-17:00',
+          season: type === 'indoor' ? '全年开放' : '11月-3月',
+          price: type === 'indoor' ? 468 : 680,
+          priceUnit: type === 'indoor' ? '4小时' : '天',
+          trails: { total: 0, beginner: 0, intermediate: 0, advanced: 0 },
+          elevation: { min: 0, max: 0, drop: 0 },
+          lifts: 0,
+          popularityScore: 0,
+          favoriteCount: 0,
+          shareCount: 0,
+          rating: 4.5,
+          source: 'amap',
+          poi: poi
+        });
+      }
+    }
+
+    /**
+     * 本地数据仓库（预设热门滑雪场）
+     */
+    class LocalRepository {
+      constructor() {
+        this.presets = this.getPopularSkiResorts();
+      }
+
+      /**
+       * 获取国内热门滑雪场（前50个）
+       * 按照人气排序
+       */
+      getPopularSkiResorts() {
+        return [
+          // 河北省（崇礼）- 2022冬奥会举办地
+          {
+            id: 'wanlong',
+            name: '万龙滑雪场',
+            city: '张家口市',
+            province: '河北省',
+            type: 'outdoor',
+            coordinates: { lat: 40.9515, lng: 115.7697 },
+            price: 880,
+            trails: { total: 32, beginner: 6, intermediate: 16, advanced: 10 },
+            elevation: { min: 1600, max: 2110, drop: 510 },
+            lifts: 7,
+            popularityScore: 95,
+            rating: 4.8
+          },
+          {
+            id: 'taiwu',
+            name: '太舞滑雪场',
+            city: '张家口市',
+            province: '河北省',
+            type: 'outdoor',
+            coordinates: { lat: 40.9389, lng: 115.7583 },
+            price: 780,
+            trails: { total: 28, beginner: 8, intermediate: 12, advanced: 8 },
+            elevation: { min: 1650, max: 2160, drop: 510 },
+            lifts: 6,
+            popularityScore: 92,
+            rating: 4.7
+          },
+          {
+            id: 'yun Ding',
+            name: '云顶滑雪场',
+            city: '张家口市',
+            province: '河北省',
+            type: 'outdoor',
+            coordinates: { lat: 40.9278, lng: 115.7686 },
+            price: 720,
+            trails: { total: 35, beginner: 10, intermediate: 15, advanced: 10 },
+            elevation: { min: 1610, max: 2100, drop: 490 },
+            lifts: 5,
+            popularityScore: 90,
+            rating: 4.6
+          },
+          {
+            id: 'fulong',
+            name: '富龙滑雪场',
+            city: '张家口市',
+            province: '河北省',
+            type: 'outdoor',
+            coordinates: { lat: 40.9656, lng: 115.7678 },
+            price: 650,
+            trails: { total: 25, beginner: 10, intermediate: 10, advanced: 5 },
+            elevation: { min: 1550, max: 2030, drop: 480 },
+            lifts: 4,
+            popularityScore: 85,
+            rating: 4.5
+          },
+
+          // 北京
+          {
+            id: 'nanshan',
+            name: '南山滑雪场',
+            city: '北京市',
+            province: '北京',
+            type: 'outdoor',
+            coordinates: { lat: 40.3956, lng: 117.1536 },
+            price: 420,
+            trails: { total: 21, beginner: 8, intermediate: 9, advanced: 4 },
+            elevation: { min: 550, max: 890, drop: 340 },
+            lifts: 5,
+            popularityScore: 88,
+            rating: 4.6
+          },
+          {
+            id: 'huabei',
+            name: '怀北滑雪场',
+            city: '北京市',
+            province: '北京',
+            type: 'outdoor',
+            coordinates: { lat: 40.3756, lng: 116.6289 },
+            price: 380,
+            trails: { total: 18, beginner: 6, intermediate: 8, advanced: 4 },
+            elevation: { min: 450, max: 850, drop: 400 },
+            lifts: 4,
+            popularityScore: 82,
+            rating: 4.4
+          },
+          {
+            id: 'badaling',
+            name: '八达岭滑雪场',
+            city: '北京市',
+            province: '北京',
+            type: 'outdoor',
+            coordinates: { lat: 40.3589, lng: 116.0136 },
+            price: 360,
+            trails: { total: 15, beginner: 6, intermediate: 7, advanced: 2 },
+            elevation: { min: 580, max: 850, drop: 270 },
+            lifts: 3,
+            popularityScore: 80,
+            rating: 4.3
+          },
+
+          // 黑龙江
+          {
+            id: 'yabuli',
+            name: '亚布力滑雪场',
+            city: '哈尔滨市',
+            province: '黑龙江省',
+            type: 'outdoor',
+            coordinates: { lat: 44.6083, lng: 128.4656 },
+            price: 680,
+            trails: { total: 40, beginner: 10, intermediate: 20, advanced: 10 },
+            elevation: { min: 350, max: 1374, drop: 1024 },
+            lifts: 8,
+            popularityScore: 93,
+            rating: 4.7
+          },
+          {
+            id: 'javglong',
+            name: '将军山滑雪场',
+            city: '阿勒泰地区',
+            province: '新疆',
+            type: 'outdoor',
+            coordinates: { lat: 47.8442, lng: 88.1397 },
+            price: 520,
+            trails: { total: 38, beginner: 8, intermediate: 20, advanced: 10 },
+            elevation: { min: 1320, max: 1850, drop: 530 },
+            lifts: 6,
+            popularityScore: 91,
+            rating: 4.8
+          },
+
+          // 新疆
+          {
+            id: 'kem Long',
+            name: '可可托海滑雪场',
+            city: '阿勒泰地区',
+            province: '新疆',
+            type: 'outdoor',
+            coordinates: { lat: 47.2189, lng: 89.8178 },
+            price: 580,
+            trails: { total: 45, beginner: 12, intermediate: 23, advanced: 10 },
+            elevation: { min: 1800, max: 3100, drop: 1300 },
+            lifts: 7,
+            popularityScore: 89,
+            rating: 4.9
+          },
+          {
+            id: 'baihua',
+            name: '白云滑雪场',
+            city: '乌鲁木齐市',
+            province: '新疆',
+            type: 'outdoor',
+            coordinates: { lat: 43.8456, lng: 87.6067 },
+            price: 420,
+            trails: { total: 22, beginner: 8, intermediate: 10, advanced: 4 },
+            elevation: { min: 1550, max: 1850, drop: 300 },
+            lifts: 4,
+            popularityScore: 78,
+            rating: 4.4
+          },
+
+          // 吉林
+          {
+            id: 'beidahu',
+            name: '北大壶滑雪场',
+            city: '吉林市',
+            province: '吉林省',
+            type: 'outdoor',
+            coordinates: { lat: 43.4192, lng: 126.6478 },
+            price: 620,
+            trails: { total: 27, beginner: 9, intermediate: 12, advanced: 6 },
+            elevation: { min: 610, max: 1406, drop: 796 },
+            lifts: 5,
+            popularityScore: 87,
+            rating: 4.6
+          },
+          {
+            id: 'songhua',
+            name: '松花湖滑雪场',
+            city: '吉林市',
+            province: '吉林省',
+            type: 'outdoor',
+            coordinates: { lat: 43.4292, lng: 126.6178 },
+            price: 680,
+            trails: { total: 34, beginner: 10, intermediate: 16, advanced: 8 },
+            elevation: { min: 590, max: 1350, drop: 760 },
+            lifts: 6,
+            popularityScore: 86,
+            rating: 4.5
+          },
+          {
+            id: 'wanfo',
+            name: '万峰通化滑雪场',
+            city: '通化市',
+            province: '吉林省',
+            type: 'outdoor',
+            coordinates: { lat: 41.5289, lng: 125.9456 },
+            price: 480,
+            trails: { total: 24, beginner: 8, intermediate: 12, advanced: 4 },
+            elevation: { min: 630, max: 1510, drop: 880 },
+            lifts: 4,
+            popularityScore: 81,
+            rating: 4.5
+          },
+
+          // 辽宁
+          {
+            id: 'qipan',
+            name: '沈阳棋盘山滑雪场',
+            city: '沈阳市',
+            province: '辽宁省',
+            type: 'outdoor',
+            coordinates: { lat: 41.9156, lng: 123.5467 },
+            price: 320,
+            trails: { total: 12, beginner: 5, intermediate: 5, advanced: 2 },
+            elevation: { min: 250, max: 420, drop: 170 },
+            lifts: 3,
+            popularityScore: 75,
+            rating: 4.3
+          },
+
+          // 内蒙古
+          {
+            id: 'aolun',
+            name: '阿尔山滑雪场',
+            city: '兴安盟',
+            province: '内蒙古',
+            type: 'outdoor',
+            coordinates: { lat: 47.1767, lng: 119.9389 },
+            price: 380,
+            trails: { total: 15, beginner: 6, intermediate: 7, advanced: 2 },
+            elevation: { min: 1300, max: 1650, drop: 350 },
+            lifts: 3,
+            popularityScore: 77,
+            rating: 4.4
+          },
+
+          // 陕西
+          {
+            id: 'cuihua',
+            name: '翠华山滑雪场',
+            city: '西安市',
+            province: '陕西省',
+            type: 'outdoor',
+            coordinates: { lat: 34.0345, lng: 108.9767 },
+            price: 280,
+            trails: { total: 10, beginner: 4, intermediate: 5, advanced: 1 },
+            elevation: { min: 1200, max: 1400, drop: 200 },
+            lifts: 2,
+            popularityScore: 72,
+            rating: 4.2
+          },
+
+          // 四川
+          {
+            id: 'xiling',
+            name: '西岭雪山滑雪场',
+            city: '成都市',
+            province: '四川省',
+            type: 'outdoor',
+            coordinates: { lat: 30.6456, lng: 103.1567 },
+            price: 380,
+            trails: { total: 18, beginner: 7, intermediate: 8, advanced: 3 },
+            elevation: { min: 2200, max: 3250, drop: 1050 },
+            lifts: 4,
+            popularityScore: 83,
+            rating: 4.5
+          },
+          {
+            id: 'bi',
+            name: '毕棚沟滑雪场',
+            city: '阿坝州',
+            province: '四川省',
+            type: 'outdoor',
+            coordinates: { lat: 31.4456, lng: 102.8978 },
+            price: 420,
+            trails: { total: 16, beginner: 6, intermediate: 7, advanced: 3 },
+            elevation: { min: 2800, max: 3800, drop: 1000 },
+            lifts: 3,
+            popularityScore: 79,
+            rating: 4.4
+          },
+
+          // 湖北
+          {
+            id: 'shennong',
+            name: '神农架滑雪场',
+            city: '神农架林区',
+            province: '湖北省',
+            type: 'outdoor',
+            coordinates: { lat: 31.7456, lng: 110.6789 },
+            price: 360,
+            trails: { total: 14, beginner: 5, intermediate: 7, advanced: 2 },
+            elevation: { min: 2100, max: 2600, drop: 500 },
+            lifts: 3,
+            popularityScore: 76,
+            rating: 4.3
+          },
+
+          // 云南
+          {
+            id: 'yulong',
+            name: '玉龙雪山滑雪场',
+            city: '丽江市',
+            province: '云南省',
+            type: 'outdoor',
+            coordinates: { lat: 27.1123, lng: 100.2367 },
+            price: 480,
+            trails: { total: 12, beginner: 4, intermediate: 6, advanced: 2 },
+            elevation: { min: 4500, max: 4700, drop: 200 },
+            lifts: 3,
+            popularityScore: 84,
+            rating: 4.6
+          },
+
+          // 室内滑雪场
+          {
+            id: 'harbor_rongchuang',
+            name: '哈尔滨融创雪世界',
+            city: '哈尔滨市',
+            province: '黑龙江省',
+            type: 'indoor',
+            coordinates: { lat: 45.7732, lng: 126.6535 },
+            price: 468,
+            trails: { total: 8, beginner: 4, intermediate: 3, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 86,
+            rating: 4.5
+          },
+          {
+            id: 'guangzhou_rongchuang',
+            name: '广州融创雪世界',
+            city: '广州市',
+            province: '广东省',
+            type: 'indoor',
+            coordinates: { lat: 23.1815, lng: 113.2852 },
+            price: 598,
+            trails: { total: 6, beginner: 3, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 88,
+            rating: 4.6
+          },
+          {
+            id: 'chengdu_rongchuang',
+            name: '成都融创雪世界',
+            city: '成都市',
+            province: '四川省',
+            type: 'indoor',
+            coordinates: { lat: 30.8567, lng: 104.0567 },
+            price: 568,
+            trails: { total: 7, beginner: 3, intermediate: 3, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 87,
+            rating: 4.5
+          },
+          {
+            id: 'wuxi_rongchuang',
+            name: '无锡融创雪世界',
+            city: '无锡市',
+            province: '江苏省',
+            type: 'indoor',
+            coordinates: { lat: 31.4856, lng: 120.3456 },
+            price: 558,
+            trails: { total: 6, beginner: 3, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 85,
+            rating: 4.5
+          },
+          {
+            id: 'shanghai_qiaobo',
+            name: '上海乔波滑雪场',
+            city: '上海市',
+            province: '上海',
+            type: 'indoor',
+            coordinates: { lat: 31.3456, lng: 121.6789 },
+            price: 488,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 82,
+            rating: 4.4
+          },
+          {
+            id: 'beijing_qiaobo',
+            name: '北京乔波滑雪场',
+            city: '北京市',
+            province: '北京',
+            type: 'indoor',
+            coordinates: { lat: 39.8234, lng: 116.5678 },
+            price: 468,
+            trails: { total: 6, beginner: 3, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 80,
+            rating: 4.3
+          },
+          {
+            id: 'shenzhen_xueleshanka',
+            name: '深圳雪乐山滑雪场',
+            city: '深圳市',
+            province: '广东省',
+            type: 'indoor',
+            coordinates: { lat: 22.6345, lng: 114.0567 },
+            price: 498,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 83,
+            rating: 4.4
+          },
+          {
+            id: 'changsha_rongchuang',
+            name: '长沙融创雪世界',
+            city: '长沙市',
+            province: '湖南省',
+            type: 'indoor',
+            coordinates: { lat: 28.2345, lng: 112.9456 },
+            price: 528,
+            trails: { total: 6, beginner: 3, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 81,
+            rating: 4.4
+          },
+          {
+            id: 'wuhan_rongchuang',
+            name: '武汉融创雪世界',
+            city: '武汉市',
+            province: '湖北省',
+            type: 'indoor',
+            coordinates: { lat: 30.6234, lng: 114.2345 },
+            price: 538,
+            trails: { total: 6, beginner: 3, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 82,
+            rating: 4.4
+          },
+          {
+            id: 'shenyang_rongchuang',
+            name: '沈阳融创雪世界',
+            city: '沈阳市',
+            province: '辽宁省',
+            type: 'indoor',
+            coordinates: { lat: 41.8123, lng: 123.4567 },
+            price: 478,
+            trails: { total: 6, beginner: 3, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 79,
+            rating: 4.3
+          },
+          {
+            id: 'kunming_rongchuang',
+            name: '昆明融创雪世界',
+            city: '昆明市',
+            province: '云南省',
+            type: 'indoor',
+            coordinates: { lat: 25.0456, lng: 102.7234 },
+            price: 518,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 78,
+            rating: 4.3
+          },
+          {
+            id: 'xian_rongchuang',
+            name: '西安融创雪世界',
+            city: '西安市',
+            province: '陕西省',
+            type: 'indoor',
+            coordinates: { lat: 34.3456, lng: 108.9456 },
+            price: 508,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 77,
+            rating: 4.3
+          },
+          {
+            id: 'tianjin_rongchuang',
+            name: '天津融创雪世界',
+            city: '天津市',
+            province: '天津',
+            type: 'indoor',
+            coordinates: { lat: 39.1234, lng: 117.2345 },
+            price: 488,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 76,
+            rating: 4.3
+          },
+          {
+            id: 'chongqing_rongchuang',
+            name: '重庆融创雪世界',
+            city: '重庆市',
+            province: '重庆',
+            type: 'indoor',
+            coordinates: { lat: 29.5678, lng: 106.5678 },
+            price: 528,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 80,
+            rating: 4.4
+          },
+          {
+            id: 'zhengzhou_rongchuang',
+            name: '郑州融创雪世界',
+            city: '郑州市',
+            province: '河南省',
+            type: 'indoor',
+            coordinates: { lat: 34.7890, lng: 113.6234 },
+            price: 498,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 75,
+            rating: 4.2
+          },
+          {
+            id: 'jinan_rongchuang',
+            name: '济南融创雪世界',
+            city: '济南市',
+            province: '山东省',
+            type: 'indoor',
+            coordinates: { lat: 36.6789, lng: 117.1234 },
+            price: 488,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 74,
+            rating: 4.2
+          },
+          {
+            id: 'taiyuan_rongchuang',
+            name: '太原融创雪世界',
+            city: '太原市',
+            province: '山西省',
+            type: 'indoor',
+            coordinates: { lat: 37.8901, lng: 112.5456 },
+            price: 468,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 73,
+            rating: 4.2
+          },
+          {
+            id: 'hefei_rongchuang',
+            name: '合肥融创雪世界',
+            city: '合肥市',
+            province: '安徽省',
+            type: 'indoor',
+            coordinates: { lat: 31.8789, lng: 117.2345 },
+            price: 508,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 72,
+            rating: 4.2
+          },
+          {
+            id: 'nanchang_rongchuang',
+            name: '南昌融创雪世界',
+            city: '南昌市',
+            province: '江西省',
+            type: 'indoor',
+            coordinates: { lat: 28.7234, lng: 115.8901 },
+            price: 498,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 71,
+            rating: 4.1
+          },
+          {
+            id: 'fuzhou_rongchuang',
+            name: '福州融创雪世界',
+            city: '福州市',
+            province: '福建省',
+            type: 'indoor',
+            coordinates: { lat: 26.1234, lng: 119.3456 },
+            price: 518,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 70,
+            rating: 4.1
+          },
+          {
+            id: 'xiamen_rongchuang',
+            name: '厦门融创雪世界',
+            city: '厦门市',
+            province: '福建省',
+            type: 'indoor',
+            coordinates: { lat: 24.4789, lng: 118.1234 },
+            price: 528,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 71,
+            rating: 4.1
+          },
+          {
+            id: 'nanning_rongchuang',
+            name: '南宁融创雪世界',
+            city: '南宁市',
+            province: '广西',
+            type: 'indoor',
+            coordinates: { lat: 22.8234, lng: 108.3456 },
+            price: 498,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 69,
+            rating: 4.1
+          },
+          {
+            id: 'haikou_rongchuang',
+            name: '海口融创雪世界',
+            city: '海口市',
+            province: '海南省',
+            type: 'indoor',
+            coordinates: { lat: 20.0456, lng: 110.3234 },
+            price: 518,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 68,
+            rating: 4.0
+          },
+          {
+            id: 'lanzhou_rongchuang',
+            name: '兰州融创雪世界',
+            city: '兰州市',
+            province: '甘肃省',
+            type: 'indoor',
+            coordinates: { lat: 36.0789, lng: 103.8234 },
+            price: 478,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 67,
+            rating: 4.0
+          },
+          {
+            id: 'yinchuan_rongchuang',
+            name: '银川融创雪世界',
+            city: '银川市',
+            province: '宁夏',
+            type: 'indoor',
+            coordinates: { lat: 38.5012, lng: 106.2345 },
+            price: 468,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 66,
+            rating: 4.0
+          },
+          {
+            id: 'xining_rongchuang',
+            name: '西宁融创雪世界',
+            city: '西宁市',
+            province: '青海省',
+            type: 'indoor',
+            coordinates: { lat: 36.6567, lng: 101.7789 },
+            price: 488,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 65,
+            rating: 4.0
+          },
+          {
+            id: 'lhasa_rongchuang',
+            name: '拉萨融创雪世界',
+            city: '拉萨市',
+            province: '西藏',
+            type: 'indoor',
+            coordinates: { lat: 29.6789, lng: 91.1234 },
+            price: 528,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 64,
+            rating: 4.0
+          },
+          {
+            id: 'guizhou_rongchuang',
+            name: '贵阳融创雪世界',
+            city: '贵阳市',
+            province: '贵州省',
+            type: 'indoor',
+            coordinates: { lat: 26.6234, lng: 106.6789 },
+            price: 498,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 67,
+            rating: 4.0
+          },
+          {
+            id: 'shijiazhuang_rongchuang',
+            name: '石家庄融创雪世界',
+            city: '石家庄市',
+            province: '河北省',
+            type: 'indoor',
+            coordinates: { lat: 38.0456, lng: 114.5234 },
+            price: 468,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 74,
+            rating: 4.2
+          },
+          {
+            id: 'tangshan_rongchuang',
+            name: '唐山融创雪世界',
+            city: '唐山市',
+            province: '河北省',
+            type: 'indoor',
+            coordinates: { lat: 39.6567, lng: 118.1789 },
+            price: 458,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 73,
+            rating: 4.1
+          },
+          {
+            id: 'baotou_rongchuang',
+            name: '包头融创雪世界',
+            city: '包头市',
+            province: '内蒙古',
+            type: 'indoor',
+            coordinates: { lat: 40.6789, lng: 109.8234 },
+            price: 458,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 69,
+            rating: 4.0
+          },
+          {
+            id: 'datong_rongchuang',
+            name: '大同融创雪世界',
+            city: '大同市',
+            province: '山西省',
+            type: 'indoor',
+            coordinates: { lat: 40.1123, lng: 113.3456 },
+            price: 458,
+            trails: { total: 5, beginner: 2, intermediate: 2, advanced: 1 },
+            elevation: { min: 0, max: 0, drop: 0 },
+            lifts: 2,
+            popularityScore: 68,
+            rating: 4.0
+          }
+        ].map(data => ({
+          ...data,
+          address: `${data.province} ${data.city}`,
+          trails: {
+            total: data.trails.total,
+            beginner: data.trails.beginner,
+            intermediate: data.trails.intermediate,
+            advanced: data.trails.advanced
+          },
+          elevation: {
+            min: data.elevation.min,
+            max: data.elevation.max,
+            drop: data.elevation.drop
+          },
+          favoriteCount: Math.floor(data.popularityScore * 10 + Math.random() * 50),
+          shareCount: Math.floor(data.popularityScore * 5 + Math.random() * 30),
+          source: 'preset'
+        }));
+      }
+
+      /**
+       * 获取热门滑雪场
+       */
+      getPopularResorts() {
+        return this.presets.map(data => new SkiResort(data));
+      }
+    }
+
+    // ========================================
+    // 应用层 - 应用服务
+    // ========================================
+
+    /**
+     * 滑雪场应用服务
+     */
+    class SkiResortService {
+      constructor() {
+        this.amapRepo = new AmapRepository();
+        this.localRepo = new LocalRepository();
+        this.currentResorts = [];
+        this.currentFilter = 'all';
+        this.userLocation = null; // { lat, lng }
+        this.searchKeyword = '';
+        this.favorites = new Set();
+
+        // 加载收藏列表
+        this.loadFavorites();
+      }
+
+      /**
+       * 初始化 - 加载热门滑雪场
+       */
+      async initialize() {
+        const popularResorts = this.localRepo.getPopularResorts();
+
+        // 计算人气评分
+        popularResorts.forEach(resort => {
+          resort.social.popularityScore = RankingService.calculatePopularityScore(resort);
+        });
+
+        // 按人气排序
+        popularResorts.sort((a, b) => b.social.popularityScore - a.social.popularityScore);
+
+        this.currentResorts = popularResorts;
+        return popularResorts;
+      }
+
+      /**
+       * 搜索滑雪场
+       */
+      async search(keyword) {
+        this.searchKeyword = keyword;
+
+        if (!keyword || keyword.trim() === '') {
+          // 空搜索：返回热门滑雪场
+          return await this.initialize();
+        }
+
+        // 获取用户位置（用于计算距离）
+        if (!this.userLocation) {
+          const cityCoords = await this.amapRepo.geocode(keyword);
+          if (cityCoords) {
+            this.userLocation = { lat: cityCoords.latitude, lng: cityCoords.longitude };
+          }
+        }
+
+        try {
+          // 从高德API搜索
+          const amapResorts = await this.amapRepo.searchSkiResorts(keyword);
+
+          // 合并预设数据和高德数据
+          const allResorts = [...this.localRepo.getPopularResorts(), ...amapResorts];
+
+          // 去重（基于ID）
+          const uniqueResorts = this.deduplicateResorts(allResorts);
+
+          // 计算距离
+          if (this.userLocation) {
+            uniqueResorts.forEach(resort => {
+              resort.distance = this.calculateDistance(
+                this.userLocation.lat,
+                this.userLocation.lng,
+                resort.location.coordinates.lat,
+                resort.location.coordinates.lng
+              );
+            });
+          }
+
+          // 计算相关度并排序
+          const searchContext = {
+            keyword: keyword,
+            userLocation: this.userLocation
+          };
+
+          uniqueResorts.forEach(resort => {
+            const relevance = SearchService.calculateRelevance(resort, searchContext);
+            resort._relevanceScore = relevance.score;
+          });
+
+          // 按相关度排序
+          uniqueResorts.sort((a, b) => b._relevanceScore - a._relevanceScore);
+
+          this.currentResorts = uniqueResorts;
+          return uniqueResorts;
+        } catch (error) {
+          console.error('搜索失败:', error);
+          // 失败时返回预设数据
+          return await this.initialize();
+        }
+      }
+
+      /**
+       * 筛选滑雪场
+       */
+      filterByType(type) {
+        this.currentFilter = type;
+
+        if (type === 'all') {
+          return this.currentResorts;
+        }
+
+        return this.currentResorts.filter(resort => resort.type === type);
+      }
+
+      /**
+       * 切换收藏状态
+       */
+      toggleFavorite(resortId) {
+        if (this.favorites.has(resortId)) {
+          this.favorites.delete(resortId);
+        } else {
+          this.favorites.add(resortId);
+        }
+
+        this.saveFavorites();
+        return this.favorites.has(resortId);
+      }
+
+      /**
+       * 检查是否已收藏
+       */
+      isFavorite(resortId) {
+        return this.favorites.has(resortId);
+      }
+
+      /**
+       * 加载收藏列表
+       */
+      loadFavorites() {
+        try {
+          const saved = localStorage.getItem('ski_resort_favorites');
+          if (saved) {
+            this.favorites = new Set(JSON.parse(saved));
+          }
+        } catch (error) {
+          console.error('加载收藏失败:', error);
+        }
+      }
+
+      /**
+       * 保存收藏列表
+       */
+      saveFavorites() {
+        try {
+          localStorage.setItem('ski_resort_favorites', JSON.stringify([...this.favorites]));
+        } catch (error) {
+          console.error('保存收藏失败:', error);
+        }
+      }
+
+      /**
+       * 去重滑雪场
+       */
+      deduplicateResorts(resorts) {
+        const seen = new Set();
+        return resorts.filter(resort => {
+          if (seen.has(resort.id)) {
+            return false;
+          }
+          seen.add(resort.id);
+          return true;
+        });
+      }
+
+      /**
+       * 计算距离（Haversine公式）
+       */
+      calculateDistance(lat1, lng1, lat2, lng2) {
+        const R = 6371; // 地球半径（km）
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+      }
+    }
+
+    // ========================================
+    // 展示层 - UI渲染
+    // ========================================
+
+    const skiResortService = new SkiResortService();
+    let searchTimeout = null;
+
+    // 初始化
+    async function init() {
+      showLoading();
+      const resorts = await skiResortService.initialize();
+      renderResorts(resorts);
+    }
+
+    // 渲染滑雪场列表
+    function renderResorts(resorts) {
+      const container = document.getElementById('resortList');
+      const statusBar = document.getElementById('statusBar');
+
+      if (resorts.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <div>没有找到相关滑雪场</div>
+            <div style="font-size: 12px; margin-top: 8px;">试试搜索其他城市</div>
+          </div>
+        `;
+        return;
+      }
+
+      // 更新状态栏
+      if (skiResortService.searchKeyword) {
+        statusBar.innerHTML = `🏂 找到 ${resorts.length} 个滑雪场`;
+      } else {
+        statusBar.innerHTML = `🏂 国内热门滑雪场（共${resorts.length}个）`;
+      }
+
+      container.innerHTML = resorts.map((resort, index) => `
+        <div class="resort-card" onclick="showDetail('${resort.id}')">
+          <div class="resort-image" style="background: linear-gradient(135deg, ${getColor(index)} 0%, ${getColor(index + 1)} 100%);">
+            <span class="resort-type-badge ${resort.type === 'indoor' ? 'badge-indoor' : 'badge-outdoor'}">
+              ${resort.type === 'indoor' ? '室内' : '室外'}
+            </span>
+            ${resort.distance ? `<span class="resort-rank">📍 ${resort.getDistanceText()}</span>` : ''}
+            ${!resort.distance && resort.social.popularityScore >= 80 ? `<span class="resort-rank">🔥 人气 TOP ${index + 1}</span>` : ''}
+          </div>
+          <div class="resort-info">
+            <div class="resort-header">
+              <div class="resort-name">${resort.name}</div>
+            </div>
+            <div class="resort-location">
+              📍 ${resort.location.city}, ${resort.location.province}
+            </div>
+            <div class="resort-meta">
+              <div class="meta-item">⭐ ${resort.social.rating}</div>
+              <div class="meta-item">🎿 ${resort.facilities.trails.total}条雪道</div>
+              <div class="meta-item">⛰️ ${resort.facilities.elevation.max}m</div>
+            </div>
+            <div class="resort-stats">
+              <div class="stat-item">
+                <span class="stat-value">${resort.facilities.trails.beginner}</span>
+                <span class="stat-label">初级</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value">${resort.facilities.trails.intermediate}</span>
+                <span class="stat-label">中级</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value">${resort.facilities.trails.advanced}</span>
+                <span class="stat-label">高级</span>
+              </div>
+            </div>
+            <div class="resort-price">
+              <span class="price-value">${resort.ticketPrice.displayText}</span>
+              <button
+                class="favorite-btn ${skiResortService.isFavorite(resort.id) ? 'active' : ''}"
+                onclick="event.stopPropagation(); toggleFavorite('${resort.id}')"
+              >
+                <span>${skiResortService.isFavorite(resort.id) ? '❤️' : '🤍'}</span>
+                ${skiResortService.isFavorite(resort.id) ? '已收藏' : '收藏'}
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 显示详情
+    function showDetail(resortId) {
+      const resort = skiResortService.currentResorts.find(r => r.id === resortId);
+      if (!resort) return;
+
+      const modal = document.getElementById('detailModal');
+      const modalBody = document.getElementById('modalBody');
+
+      modalBody.innerHTML = `
+        <div class="detail-section">
+          <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 12px;">${resort.name}</h2>
+          <div style="font-size: 13px; color: #666; margin-bottom: 16px;">
+            📍 ${resort.location.fullName} | ${resort.type === 'indoor' ? '室内' : '室外'}
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-title">🎫 营业信息</div>
+          <div class="detail-item">
+            <span class="detail-label">开放时间</span>
+            <span class="detail-value">${resort.openTime}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">开放季节</span>
+            <span class="detail-value">${resort.season}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">门票价格</span>
+            <span class="detail-value">${resort.ticketPrice.displayText}</span>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-title">🎿 雪道设施</div>
+          <div class="detail-item">
+            <span class="detail-label">雪道总数</span>
+            <span class="detail-value">${resort.facilities.trails.total}条</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">雪道分布</span>
+            <span class="detail-value">${resort.facilities.trailDistribution}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">海拔落差</span>
+            <span class="detail-value">${resort.facilities.elevation.min}m - ${resort.facilities.elevation.max}m（落差${resort.facilities.elevation.drop}m）</span>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-title">⭐ 社交信息</div>
+          <div class="detail-item">
+            <span class="detail-label">人气评分</span>
+            <span class="detail-value">${resort.social.popularityScore}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">用户评分</span>
+            <span class="detail-value">${resort.social.rating}</span>
+          </div>
+        </div>
+
+        ${resort.distance ? `
+        <div class="detail-section">
+          <div class="detail-title">📍 距离信息</div>
+          <div class="detail-item">
+            <span class="detail-label">距离</span>
+            <span class="detail-value">${resort.getDistanceText()}</span>
+          </div>
+        </div>
+        ` : ''}
+      `;
+
+      modal.classList.add('active');
+    }
+
+    // 关闭详情
+    function closeModal() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
+
+    // 切换收藏
+    async function toggleFavorite(resortId) {
+      const isFav = skiResortService.toggleFavorite(resortId);
+
+      // 更新按钮状态
+      const btn = event.target.closest('.favorite-btn');
+      if (isFav) {
+        btn.classList.add('active');
+        btn.innerHTML = '<span>❤️</span> 已收藏';
+      } else {
+        btn.classList.remove('active');
+        btn.innerHTML = '<span>🤍</span> 收藏';
+      }
+    }
+
+    // 筛选类型
+    async function filterByType(type) {
+      // 更新按钮状态
+      document.querySelectorAll('.filter-tag').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.type === type);
+      });
+
+      // 筛选并渲染
+      const filtered = skiResortService.filterByType(type);
+      renderResorts(filtered);
+    }
+
+    // 获取颜色
+    function getColor(index) {
+      const colors = [
+        '#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b',
+        '#fa709a', '#fee140', '#30cfd0', '#a8edea', '#fed6e3'
+      ];
+      return colors[index % colors.length];
+    }
+
+    // 显示加载
+    function showLoading() {
+      document.getElementById('resortList').innerHTML = `
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <div style="margin-top: 16px;">加载中...</div>
+        </div>
+      `;
+    }
+
+    // ========================================
+    // 事件监听
+    // ========================================
+
+    // 搜索输入
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      const keyword = e.target.value.trim();
+
+      searchTimeout = setTimeout(async () => {
+        if (keyword === '') {
+          // 空搜索：显示热门
+          skiResortService.searchKeyword = '';
+          skiResortService.userLocation = null;
+          const resorts = await skiResortService.initialize();
+          filterByType(skiResortService.currentFilter);
+        } else {
+          // 有关键词：搜索
+          showLoading();
+          const resorts = await skiResortService.search(keyword);
+          filterByType(skiResortService.currentFilter);
+        }
+      }, 500);
+    });
+
+    // 筛选按钮
+    document.querySelectorAll('.filter-tag').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterByType(btn.dataset.type);
+      });
+    });
+
+    // 点击遮罩关闭弹窗
+    document.getElementById('detailModal').addEventListener('click', (e) => {
+      if (e.target.id === 'detailModal') {
+        closeModal();
+      }
+    });
+
+    // 页面加载完成
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 出发城市选择 -->
+  <view class="departure-section">
+    <view class="departure-label">📍 出发城市</view>
+    <view class="departure-input-wrapper">
+      <image class="location-icon" src="/images/location.png"></image>
+      <input
+        class="departure-input"
+        placeholder="输入你的出发城市"
+        value="{{departureCity}}"
+        bindinput="onDepartureInput"
+        confirm-type="search"
+        bindconfirm="onSearchByCity"
+      />
+      <image wx:if="{{departureCity}}" class="clear-icon" src="/images/close.png" bindtap="onClearDeparture"></image>
+    </view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrapper">
+      <image class="search-icon" src="/images/search-icon.png" mode="aspectFit"></image>
+      <input
+        class="search-input"
+        placeholder="搜索目标城市或滑雪场"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+        bindconfirm="onSearch"
+      />
+      <image wx:if="{{searchKeyword}}" class="clear-icon" src="/images/close.png" mode="aspectFit" bindtap="onClearSearch"></image>
+    </view>
+  </view>
+
+  <!-- 筛选条件 -->
+  <view class="filter-bar">
+    <view class="filter-item {{filterType === 'all' ? 'active' : ''}}" bindtap="onFilterType" data-type="all">
+      全部
+    </view>
+    <view class="filter-item {{filterType === 'indoor' ? 'active' : ''}}" bindtap="onFilterType" data-type="indoor">
+      室内
+    </view>
+    <view class="filter-item {{filterType === 'outdoor' ? 'active' : ''}}" bindtap="onFilterType" data-type="outdoor">
+      室外
+    </view>
+  </view>
+
+  <!-- 已选择的滑雪场数量 -->
+  <view wx:if="{{selectedResorts.length > 0}}" class="selected-bar">
+    <text class="selected-count">已选择 {{selectedResorts.length}} 个滑雪场</text>
+    <view class="selected-actions">
+      <button class="btn-view-selected" bindtap="onViewSelected">查看已选</button>
+      <button class="btn-compare" bindtap="onCompare">对比</button>
+    </view>
+  </view>
+
+  <!-- 距离信息 -->
+  <view wx:if="{{departureCity}}" class="location-info">
+    <image class="location-icon" src="/images/location.png"></image>
+    <text class="location-text">从{{departureCity}}出发，按距离排序</text>
+  </view>
+  <view wx:else class="location-info location-info-hint">
+    <image class="location-icon" src="/images/location.png"></image>
+    <text class="location-text">请输入出发城市查看距离</text>
+  </view>
+
+  <!-- 搜索结果列表 -->
+  <view class="resorts-list">
+    <block wx:for="{{filteredResorts}}" wx:key="id">
+      <view class="resort-card" bindtap="onResortTap" data-id="{{item.id}}">
+        <!-- 选择框 -->
+        <view class="checkbox-wrapper" catchtap="onSelectResort" data-id="{{item.id}}">
+          <image
+            class="checkbox-icon"
+            src="{{item.selected ? '/images/checkbox-checked.png' : '/images/checkbox.png'}}"
+          ></image>
+        </view>
+
+        <!-- 滑雪场图片 -->
+        <view class="resort-image-wrapper">
+          <image class="resort-image" src="{{item.images[0]}}" mode="aspectFill"></image>
+          <view class="resort-type-tag {{item.type === 'indoor' ? 'tag-indoor' : 'tag-outdoor'}}">
+            {{item.type === 'indoor' ? '室内' : '室外'}}
+          </view>
+          <view class="distance-tag">
+            <image class="distance-icon" src="/images/pin.png"></image>
+            {{item.distance ? '距你 ' + item.distance + 'km' : '距离计算中...'}}
+          </view>
+        </view>
+
+        <!-- 滑雪场信息 -->
+        <view class="resort-info">
+          <view class="resort-name-row">
+            <text class="resort-name">{{item.name}}</text>
+            <view class="rating-wrapper">
+              <image class="star-icon" src="/images/star.png"></image>
+              <text class="rating-text">{{item.rating}}</text>
+            </view>
+          </view>
+
+          <view class="resort-location">
+            <image class="location-small-icon" src="/images/location-small.png"></image>
+            <text class="location-text-small">{{item.city}}, {{item.country}}</text>
+          </view>
+
+          <view class="resort-details">
+            <view class="detail-item">
+              <text class="detail-label">雪道数</text>
+              <text class="detail-value">{{item.trails}}条</text>
+            </view>
+            <view class="detail-item">
+              <text class="detail-label">海拔</text>
+              <text class="detail-value">{{item.elevation}}m</text>
+            </view>
+            <view class="detail-item">
+              <text class="detail-label">雪季</text>
+              <text class="detail-value">{{item.season}}</text>
+            </view>
+          </view>
+
+          <view class="transportation-info">
+            <text class="transport-title">从{{departureCity || '出发地'}}前往：</text>
+            <block wx:for="{{item.transportation}}" wx:key="type" wx:for-item="trans">
+              <view class="transport-item">
+                <text class="transport-type">{{trans.type}}</text>
+                <text class="transport-detail">{{trans.duration}}</text>
+              </view>
+            </block>
+          </view>
+
+          <view class="resort-footer">
+            <view class="price-wrapper">
+              <text class="price-label">参考价</text>
+              <text class="price-value">¥{{item.price}}</text>
+              <text class="price-unit">/{{item.priceUnit}}</text>
+            </view>
+            <view class="review-count">
+              <text>{{item.reviewCount}}条评价</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <view wx:if="{{filteredResorts.length === 0}}" class="empty-state">
+      <image class="empty-icon" src="/images/empty.png"></image>
+      <text class="empty-text">没有找到相关滑雪场</text>
+      <text class="empty-hint">试试搜索其他城市吧</text>
+    </view>
+  </view>
+
+  <!-- 比较浮动按钮 -->
+  <view wx:if="{{selectedResorts.length >= 2}}" class="float-compare-btn" bindtap="onCompare">
+    <image class="float-compare-icon" src="/images/compare-white.png"></image>
+    <text>对比({{selectedResorts.length}})</text>
+  </view>
+</view>

@@ -1,0 +1,317 @@
+<!--pages/explore/explore.wxml-->
+<view class="container">
+  <!-- 顶部标签切换 -->
+  <view class="tabs">
+    <view
+      class="tab-item {{currentTab === 0 ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="0"
+    >
+      滑雪社区
+    </view>
+    <view
+      class="tab-item {{currentTab === 1 ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="1"
+    >
+      找搭子
+    </view>
+  </view>
+
+  <!-- 滑雪社区 -->
+  <view wx:if="{{currentTab === 0}}" class="community-content">
+    <!-- 发布按钮 -->
+    <view class="fab" bindtap="onPublish">
+      <image class="fab-icon" src="/images/add-white.png"></image>
+    </view>
+
+    <!-- 评价列表 -->
+    <scroll-view class="reviews-list" scroll-y enhanced show-scrollbar="{{false}}">
+      <block wx:for="{{reviews}}" wx:key="id">
+        <view class="review-card">
+          <!-- 用户信息 -->
+          <view class="review-user">
+            <image class="user-avatar" src="{{item.user.avatar}}" mode="aspectFill"></image>
+            <view class="user-info">
+              <view class="user-name-row">
+                <text class="user-nickname">{{item.user.nickname}}</text>
+                <view class="user-tags">
+                  <text class="user-tag tag-type">{{item.user.skiType}}</text>
+                  <text class="user-tag tag-level">{{item.user.level}}</text>
+                </view>
+              </view>
+              <view class="user-details">
+                <text class="user-detail">{{item.user.experience}} · {{item.user.gender}}</text>
+                <text class="user-location">{{item.user.location}}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 评分和滑雪场 -->
+          <view class="review-header">
+            <view class="resort-ref" bindtap="onResortTap" data-id="{{item.resortId}}">
+              <image class="resort-ref-icon" src="/images/ski.png"></image>
+              <text class="resort-ref-name">{{item.resortName}}</text>
+            </view>
+            <view class="review-rating">
+              <image class="star-small" src="/images/star.png"></image>
+              <text class="rating-number">{{item.rating}}</text>
+            </view>
+          </view>
+
+          <!-- 评价内容 -->
+          <view class="review-content">{{item.content}}</view>
+
+          <!-- 评价图片 -->
+          <view wx:if="{{item.images && item.images.length > 0}}" class="review-images">
+            <block wx:for="{{item.images}}" wx:key="*this" wx:for-item="img">
+              <image class="review-image" src="{{img}}" mode="aspectFill" bindtap="onPreviewImage" data-url="{{img}}" data-urls="{{item.images}}"></image>
+            </block>
+          </view>
+
+          <!-- 评价标签 -->
+          <view wx:if="{{item.tags && item.tags.length > 0}}" class="review-tags">
+            <block wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">
+              <text class="review-tag">{{tag}}</text>
+            </block>
+          </view>
+
+          <!-- AI和网友打分 -->
+          <view class="review-scores">
+            <view class="score-item">
+              <image class="score-icon" src="/images/ai-icon.png"></image>
+              <text class="score-label">AI评分</text>
+              <text class="score-value">{{item.aiScore}}</text>
+            </view>
+            <view class="score-divider"></view>
+            <view class="score-item">
+              <image class="score-icon" src="/images/users-icon.png"></image>
+              <text class="score-label">网友评分</text>
+              <text class="score-value">{{item.avgScore}}</text>
+            </view>
+            <view class="score-divider"></view>
+            <view class="score-item">
+              <image class="score-icon" src="/images/people-icon.png"></image>
+              <text class="score-label">{{item.userScores.length}}人打分</text>
+            </view>
+          </view>
+
+          <!-- 媒体内容 -->
+          <view wx:if="{{item.mediaType === 'image' && item.images && item.images.length > 0}}" class="review-images">
+            <block wx:for="{{item.images}}" wx:key="*this" wx:for-item="img" wx:for-index="imgIdx">
+              <image class="review-image" src="{{img}}" mode="aspectFill" bindtap="onPreviewImage" data-url="{{img}}" data-urls="{{item.images}}"></image>
+            </block>
+          </view>
+          <view wx:if="{{item.mediaType === 'video'}}" class="review-video">
+            <video class="video-player" src="{{item.videoUrl}}" poster="{{item.videoPoster}}"></video>
+          </view>
+
+          <!-- 底部信息 -->
+          <view class="review-footer">
+            <text class="review-date">{{item.date}}</text>
+            <view class="review-actions">
+              <view class="action-item" bindtap="onLike" data-id="{{item.id}}">
+                <image class="action-icon" src="/images/like.png"></image>
+                <text>{{item.likes}}</text>
+              </view>
+              <view class="action-item" bindtap="onComment" data-id="{{item.id}}">
+                <image class="action-icon" src="/images/comment.png"></image>
+                <text>{{item.replies.length}}</text>
+              </view>
+              <view class="action-item" bindtap="onShareReview" data-id="{{item.id}}">
+                <image class="action-icon" src="/images/share.png"></image>
+              </view>
+            </view>
+          </view>
+
+          <!-- 回复列表 -->
+          <view wx:if="{{item.replies && item.replies.length > 0}}" class="replies-list">
+            <block wx:for="{{item.replies}}" wx:key="*this" wx:for-item="reply">
+              <view class="reply-item">
+                <image class="reply-avatar" src="{{reply.user.avatar}}" mode="aspectFill"></image>
+                <view class="reply-content">
+                  <text class="reply-user">{{reply.user.nickname}}</text>
+                  <text class="reply-text">{{reply.content}}</text>
+                  <text class="reply-date">{{reply.date}}</text>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+
+  <!-- 找搭子 -->
+  <view wx:if="{{currentTab === 1}}" class="partners-content">
+    <!-- 搜索和筛选 -->
+    <view class="partner-search-bar">
+      <view class="search-box">
+        <image class="search-icon" src="/images/search-icon.png"></image>
+        <input
+          class="search-input"
+          placeholder="搜索滑雪场、出发地"
+          value="{{partnerSearchKeyword}}"
+          bindinput="onPartnerSearchInput"
+        />
+      </view>
+      <view class="filter-tags">
+        <view class="filter-tag {{partnerFilterType === 'latest' ? 'active' : ''}}" bindtap="onPartnerFilter" data-type="latest">
+          最新
+        </view>
+        <view class="filter-tag {{partnerFilterType === 'resort' ? 'active' : ''}}" bindtap="onPartnerFilter" data-type="resort">
+          滑雪场
+        </view>
+        <view class="filter-tag {{partnerFilterType === 'departure' ? 'active' : ''}}" bindtap="onPartnerFilter" data-type="departure">
+          出发地
+        </view>
+      </view>
+    </view>
+    <!-- 发布按钮 -->
+    <view class="fab" bindtap="onPublishPartner">
+      <image class="fab-icon" src="/images/add-white.png"></image>
+    </view>
+
+    <!-- 搭子列表 -->
+    <scroll-view class="partners-list" scroll-y enhanced show-scrollbar="{{false}}">
+      <block wx:for="{{partners}}" wx:key="id">
+        <view class="partner-card">
+          <!-- 发起人信息 -->
+          <view class="partner-user">
+            <image class="partner-avatar" src="{{item.user.avatar}}" mode="aspectFill"></image>
+            <view class="partner-user-info">
+              <view class="partner-name-row">
+                <text class="partner-nickname">{{item.user.nickname}}</text>
+                <view class="partner-badges">
+                  <text class="badge badge-gender">{{item.user.gender}}</text>
+                  <text class="badge badge-age">{{item.user.age}}岁</text>
+                </view>
+              </view>
+              <view class="partner-skill">
+                <text class="skill-item">{{item.user.skiType}}</text>
+                <text class="skill-separator">·</text>
+                <text class="skill-item">{{item.user.level}}</text>
+                <text class="skill-separator">·</text>
+                <text class="skill-item">{{item.user.experience}}</text>
+              </view>
+              <view class="partner-location">
+                <image class="location-icon-small" src="/images/location-small.png"></image>
+                <text>{{item.user.location}}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 目标滑雪场和日期 -->
+          <view class="trip-info">
+            <view class="trip-info-item">
+              <image class="trip-icon" src="/images/ski-resort.png"></image>
+              <view class="trip-info-text">
+                <text class="trip-label">目标雪场</text>
+                <text class="trip-value">{{item.targetResort}}</text>
+              </view>
+            </view>
+            <view class="trip-info-item">
+              <image class="trip-icon" src="/images/calendar.png"></image>
+              <view class="trip-info-text">
+                <text class="trip-label">计划日期</text>
+                <text class="trip-value">{{item.plannedDate}}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 描述 -->
+          <view class="partner-description">{{item.description}}</view>
+
+          <!-- 标签 -->
+          <view class="partner-tags">
+            <block wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">
+              <text class="partner-tag">{{tag}}</text>
+            </block>
+          </view>
+
+          <!-- 状态和人数 -->
+          <view class="partner-footer">
+            <view class="partner-status status-{{item.status}}">
+              {{item.status === 'open' ? '招募中' : item.status === 'full' ? '已满员' : '已结束'}}
+            </view>
+            <view class="partner-joiners">
+              <text class="joiners-text">{{item.joiners.length}}/{{item.maxJoiners}}人</text>
+            </view>
+            <text class="partner-time">{{item.createTime}}</text>
+          </view>
+
+          <!-- 操作按钮 -->
+          <view class="partner-actions">
+            <button class="btn-contact" bindtap="onContact" data-wechat="{{item.user.wechat}}">
+              <image class="btn-icon" src="/images/wechat.png"></image>
+              联系TA
+            </button>
+            <button
+              wx:if="{{item.status === 'open' && item.joiners.length < item.maxJoiners}}"
+              class="btn-join"
+              bindtap="onJoin"
+              data-id="{{item.id}}"
+            >
+              申请加入
+            </button>
+
+            <!-- 智能匹配提示 -->
+            <view wx:if="{{item.matchedUsers && item.matchedUsers.length > 0}}" class="matched-users">
+              <view class="matched-title">💡 匹配到{{item.matchedUsers.length}}位行程相近的雪友</view>
+              <scroll-view class="matched-users-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+                <block wx:for="{{item.matchedUsers}}" wx:key="id" wx:for-item="user">
+                  <view class="matched-user-item" bindtap="onViewMatchedUser" data-user="{{user}}">
+                    <image class="matched-avatar" src="{{user.avatar}}" mode="aspectFill"></image>
+                    <text class="matched-name">{{user.nickname}}</text>
+                  </view>
+                </block>
+              </scroll-view>
+            </view>
+          </view>
+
+          <!-- 相似行程推荐（当发布行程后显示） -->
+          <view wx:if="{{showSimilarTrips}}" class="similar-trips-card">
+            <view class="similar-trips-header">
+              <text class="similar-trips-title">🎯 行程相似推荐</text>
+              <text class="similar-trips-count">找到{{similarTrips.length}}个相似行程</text>
+            </view>
+            <scroll-view class="similar-trips-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+              <block wx:for="{{similarTrips}}" wx:key="id" wx:for-item="trip">
+                <view class="similar-trip-item" bindtap="onViewSimilarTrip" data-trip="{{trip}}">
+                  <view class="similar-trip-user">
+                    <image class="similar-trip-avatar" src="{{trip.user.avatar}}" mode="aspectFill"></image>
+                    <view class="similar-trip-user-info">
+                      <text class="similar-trip-name">{{trip.user.nickname}}</text>
+                      <text class="similar-trip-level">{{trip.user.level}}</text>
+                    </view>
+                  </view>
+                  <view class="similar-trip-details">
+                    <text class="similar-trip-resort">{{trip.targetResort}}</text>
+                    <text class="similar-trip-date">{{trip.plannedDate}}</text>
+                  </view>
+                  <view class="similar-trip-match">
+                    <text class="match-percent">{{trip.matchPercent}}%匹配</text>
+                  </view>
+                </view>
+              </block>
+            </scroll-view>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+</view>
+          </view>
+
+          <!-- 已加入的人 -->
+          <view wx:if="{{item.joiners.length > 0}}" class="joiners-list">
+            <text class="joiners-label">已加入：</text>
+            <block wx:for="{{item.joiners}}" wx:key="id" wx:for-item="joiner">
+              <text class="joiner-name">{{joiner.nickname}}</text>
+            </block>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+</view>

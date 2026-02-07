@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>笔记页预览 - 滑雪场助手</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #FAFBFD;
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* ========== 顶部导航栏 ========== */
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #E8F4FD;
+    }
+
+    .location {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #2C3E50;
+    }
+
+    .location-arrow {
+      margin-left: 4px;
+      color: #95A5A6;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 12px;
+      font-size: 18px;
+    }
+
+    /* ========== 分类Tab ========== */
+    .category-tabs {
+      display: flex;
+      padding: 10px 16px;
+      background: #FFFFFF;
+      gap: 16px;
+      overflow-x: auto;
+      border-bottom: 1px solid #E8F4FD;
+    }
+
+    .tab-item {
+      position: relative;
+      padding: 6px 12px;
+      font-size: 14px;
+      color: #95A5A6;
+      border-radius: 20px;
+      transition: all 0.3s;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .tab-item.active {
+      color: #4A90E2;
+      background: #E8F4FD;
+      font-weight: 500;
+    }
+
+    .tab-indicator {
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 2px;
+      background: #4A90E2;
+      border-radius: 1px;
+    }
+
+    /* ========== 笔记列表 - 瀑布流 ========== */
+    .notes-container {
+      display: flex;
+      padding: 10px 12px;
+      gap: 10px;
+    }
+
+    .notes-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ========== 笔记卡片 ========== */
+    .note-card {
+      background: #FFFFFF;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(91, 155, 213, 0.08);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .note-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(91, 155, 213, 0.15);
+    }
+
+    .note-cover {
+      position: relative;
+      width: 100%;
+      padding-bottom: 125%;
+      background-size: cover;
+      background-position: center;
+      background-color: #F0F4F8;
+    }
+
+    .note-type-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      color: #FFFFFF;
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+    }
+
+    .note-type-badge.experience {
+      background: rgba(91, 155, 213, 0.9);
+    }
+
+    .note-type-badge.partner {
+      background: rgba(78, 205, 196, 0.9);
+    }
+
+    .note-title {
+      padding: 10px 10px 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #2C3E50;
+      line-height: 1.4;
+      height: 38px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .note-author {
+      display: flex;
+      padding: 6px 10px;
+      gap: 8px;
+    }
+
+    .author-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid #E8F4FD;
+    }
+
+    .author-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .author-name {
+      font-size: 12px;
+      color: #2C3E50;
+      font-weight: 500;
+    }
+
+    .author-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .author-tag {
+      padding: 2px 6px;
+      background: #E8F4FD;
+      color: #5B9BD5;
+      font-size: 10px;
+      border-radius: 4px;
+    }
+
+    .note-stats {
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 10px;
+      border-top: 1px solid #E8F4FD;
+    }
+
+    .stat-item {
+      font-size: 12px;
+      color: #7F8C8D;
+    }
+
+    .partner-info {
+      color: #FF8B5A;
+      font-weight: 500;
+    }
+
+    /* ========== 发布按钮 ========== */
+    .publish-btn {
+      position: fixed;
+      right: 16px;
+      bottom: 70px;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #FF8B5A 0%, #FF6B35 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+      z-index: 99;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .publish-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .publish-icon {
+      font-size: 24px;
+    }
+
+    /* ========== 底部Tab ========== */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #FFFFFF;
+      border-top: 1px solid rgba(227, 232, 237, 0.5);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+
+    .tab-item-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .tab-icon {
+      font-size: 24px;
+      opacity: 0.5;
+    }
+
+    .tab-item-bottom.active .tab-icon {
+      opacity: 1;
+    }
+
+    .tab-text {
+      font-size: 12px;
+      color: #95A5A6;
+    }
+
+    .tab-item-bottom.active .tab-text {
+      color: #4A90E2;
+      font-weight: 500;
+    }
+
+    .cat-paw {
+      font-size: 8px;
+      color: #4A90E2;
+    }
+
+    /* ========== 空状态 ========== */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+    }
+
+    .empty-icon {
+      font-size: 60px;
+      margin-bottom: 12px;
+    }
+
+    .empty-text {
+      font-size: 16px;
+      color: #2C3E50;
+      margin-bottom: 6px;
+    }
+
+    .empty-hint {
+      font-size: 13px;
+      color: #95A5A6;
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航栏 -->
+  <div class="nav-bar">
+    <div class="location">
+      <span>📍</span>
+      <span>北京</span>
+      <span class="location-arrow">›</span>
+    </div>
+    <div class="nav-actions">
+      <span>🔍</span>
+      <span>📩</span>
+    </div>
+  </div>
+
+  <!-- 分类Tab -->
+  <div class="category-tabs">
+    <div class="tab-item active">全部</div>
+    <div class="tab-item">体验</div>
+    <div class="tab-item">找搭子</div>
+    <div class="tab-item">推荐</div>
+  </div>
+
+  <!-- 笔记列表 - 瀑布流 -->
+  <div class="notes-container">
+    <!-- 左列 -->
+    <div class="notes-column">
+      <!-- 笔记卡片1 -->
+      <div class="note-card">
+        <div class="note-cover" style="background-image: url('https://images.unsplash.com/photo-1551524559-8af4e6624178?w=800')">
+          <div class="note-type-badge experience">🐱❄️ 体验</div>
+        </div>
+        <div class="note-title">万龙周末两天一夜，雪质绝了！</div>
+        <div class="note-author">
+          <img class="author-avatar" src="https://i.pravatar.cc/150?img=11" />
+          <div class="author-info">
+            <div class="author-name">单板小王</div>
+            <div class="author-tags">
+              <span class="author-tag">单板</span>
+              <span class="author-tag">摄影控</span>
+            </div>
+          </div>
+        </div>
+        <div class="note-stats">
+          <div class="stat-item">❤️ 234</div>
+          <div class="stat-item">💬 45</div>
+        </div>
+      </div>
+
+      <!-- 笔记卡片2 -->
+      <div class="note-card">
+        <div class="note-cover" style="background-image: url('https://images.unsplash.com/photo-1565992441121-4367c2967103?w=800')">
+          <div class="note-type-badge partner">🐱👥 搭子</div>
+        </div>
+        <div class="note-title">2月15去太舞，找个小伙伴一起拍照！</div>
+        <div class="note-author">
+          <img class="author-avatar" src="https://i.pravatar.cc/150?img=12" />
+          <div class="author-info">
+            <div class="author-name">北京单板小伙</div>
+            <div class="author-tags">
+              <span class="author-tag">单板</span>
+              <span class="author-tag">可开车</span>
+            </div>
+          </div>
+        </div>
+        <div class="note-stats">
+          <div class="stat-item partner-info">👥 1/3人</div>
+        </div>
+      </div>
+
+      <!-- 笔记卡片3 -->
+      <div class="note-card">
+        <div class="note-cover" style="background-image: url('https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800')">
+          <div class="note-type-badge experience">🐱❄️ 体验</div>
+        </div>
+        <div class="note-title">云顶滑雪场夜场体验，灯光超美！</div>
+        <div class="note-author">
+          <img class="author-avatar" src="https://i.pravatar.cc/150?img=15" />
+          <div class="author-info">
+            <div class="author-name">夜场爱好者</div>
+            <div class="author-tags">
+              <span class="author-tag">单板</span>
+              <span class="author-tag">夜场</span>
+            </div>
+          </div>
+        </div>
+        <div class="note-stats">
+          <div class="stat-item">❤️ 312</div>
+          <div class="stat-item">💬 67</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右列 -->
+    <div class="notes-column">
+      <!-- 笔记卡片4 -->
+      <div class="note-card">
+        <div class="note-cover" style="background-image: url('https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=800')">
+          <div class="note-type-badge experience">🐱❄️ 体验</div>
+        </div>
+        <div class="note-title">哈尔滨融创室内滑雪初体验</div>
+        <div class="note-author">
+          <img class="author-avatar" src="https://i.pravatar.cc/150?img=13" />
+          <div class="author-info">
+            <div class="author-name">小白爱滑雪</div>
+            <div class="author-tags">
+              <span class="author-tag">双板</span>
+              <span class="author-tag">小白</span>
+            </div>
+          </div>
+        </div>
+        <div class="note-stats">
+          <div class="stat-item">❤️ 156</div>
+          <div class="stat-item">💬 32</div>
+        </div>
+      </div>
+
+      <!-- 笔记卡片5 -->
+      <div class="note-card">
+        <div class="note-cover" style="background-image: url('https://images.unsplash.com/photo-1551524559-8af4e6624178?w=800')">
+          <div class="note-type-badge partner">🐱👥 搭子</div>
+        </div>
+        <div class="note-title">3月二世古5天行，找个女生搭子拼房～</div>
+        <div class="note-author">
+          <img class="author-avatar" src="https://i.pravatar.cc/150?img=6" />
+          <div class="author-info">
+            <div class="author-name">双板小姐姐</div>
+            <div class="author-tags">
+              <span class="author-tag">双板</span>
+              <span class="author-tag">女生</span>
+            </div>
+          </div>
+        </div>
+        <div class="note-stats">
+          <div class="stat-item partner-info">👥 2/2人</div>
+        </div>
+      </div>
+
+      <!-- 笔记卡片6 -->
+      <div class="note-card">
+        <div class="note-cover" style="background-image: url('https://images.unsplash.com/photo-1565992441121-4367c2967103?w=800')">
+          <div class="note-type-badge experience">🐱❄️ 体验</div>
+        </div>
+        <div class="note-title">富龙滑雪场攻略，新手必看！</div>
+        <div class="note-author">
+          <img class="author-avatar" src="https://i.pravatar.cc/150?img=17" />
+          <div class="author-info">
+            <div class="author-name">滑雪教练小张</div>
+            <div class="author-tags">
+              <span class="author-tag">双板</span>
+              <span class="author-tag">教练</span>
+            </div>
+          </div>
+        </div>
+        <div class="note-stats">
+          <div class="stat-item">❤️ 445</div>
+          <div class="stat-item">💬 89</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 发布按钮 -->
+  <div class="publish-btn">
+    <span class="publish-icon">✏️🐱</span>
+  </div>
+
+  <!-- 底部Tab栏 -->
+  <div class="tab-bar">
+    <div class="tab-item-bottom">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-text">发现</span>
+    </div>
+    <div class="tab-item-bottom active">
+      <span class="tab-icon">📝</span>
+      <span class="tab-text">笔记</span>
+      <span class="cat-paw">🐾</span>
+    </div>
+    <div class="tab-item-bottom">
+      <span class="tab-icon">👤</span>
+      <span class="tab-text">我的</span>
+    </div>
+  </div>
+
+  <script>
+    // Tab切换
+    document.querySelectorAll('.tab-item').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 底部Tab切换
+    document.querySelectorAll('.tab-item-bottom').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab-item-bottom').forEach(t => {
+          t.classList.remove('active');
+          const paw = t.querySelector('.cat-paw');
+          if (paw) paw.remove();
+        });
+        this.classList.add('active');
+        if (this.classList.contains('active') && !this.querySelector('.cat-paw')) {
+          const paw = document.createElement('span');
+          paw.className = 'cat-paw';
+          paw.textContent = '🐾';
+          this.appendChild(paw);
+        }
+      });
+    });
+
+    // 笔记卡片点击
+    document.querySelectorAll('.note-card').forEach(card => {
+      card.addEventListener('click', function() {
+        alert('打开笔记详情页（演示）');
+      });
+    });
+
+    // 发布按钮点击
+    document.querySelector('.publish-btn').addEventListener('click', function() {
+      alert('打开发布笔记页（演示）');
+    });
+
+    // 位置点击
+    document.querySelector('.location').addEventListener('click', function() {
+      const cities = ['北京', '上海', '广州', '深圳', '哈尔滨', '张家口'];
+      alert('选择位置：' + cities.join(', '));
+    });
+
+    // 搜索点击
+    document.querySelector('.search-btn')?.addEventListener('click', function() {
+      alert('打开搜索（演示）');
+    });
+  </script>
+</body>
+</html>

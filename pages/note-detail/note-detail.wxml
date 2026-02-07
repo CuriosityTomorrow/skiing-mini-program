@@ -1,0 +1,134 @@
+<!--pages/note-detail/note-detail.wxml-->
+<view class="note-detail-page">
+  <!-- 图片轮播 -->
+  <view class="image-swiper">
+    <swiper
+      indicator-dots="{{note.images.length > 1}}"
+      autoplay="{{false}}"
+      interval="5000"
+      duration="300"
+      indicator-color="rgba(255,255,255,0.5)"
+      indicator-active-color="#FFFFFF"
+    >
+      <swiper-item wx:for="{{note.images}}" wx:key="*this">
+        <image class="swiper-image" src="{{item}}" mode="aspectFill" />
+      </swiper-item>
+    </swiper>
+    <view class="image-count" wx:if="{{note.images.length > 1}}">
+      {{currentImageIndex + 1}}/{{note.images.length}}
+    </view>
+  </view>
+
+  <!-- 作者信息 -->
+  <view class="author-section">
+    <view class="author-main">
+      <image class="author-avatar" src="{{note.author.avatar}}" />
+      <view class="author-info">
+        <text class="author-name">{{note.author.nickname}}</text>
+        <view class="author-tags">
+          <text class="author-tag" wx:for="{{note.author.displayTags}}" wx:for-item="tag" wx:key="*this">
+            {{tag}}
+          </text>
+        </view>
+      </view>
+      <button class="follow-btn" size="mini">关注</button>
+    </view>
+  </view>
+
+  <!-- 关联的滑雪场 -->
+  <view class="resort-section" wx:if="{{note.resortName}}" bindtap="goToResort">
+    <text class="resort-icon">📍</text>
+    <text class="resort-name">{{note.resortName}}</text>
+    <text class="resort-arrow">›</text>
+  </view>
+
+  <!-- 笔记内容 -->
+  <view class="content-section">
+    <view class="note-title">{{note.title}}</view>
+    <view class="note-content">{{note.content}}</view>
+
+    <!-- 找搭子专用信息 -->
+    <view class="partner-info-card" wx:if="{{note.type === 'partner' && note.partnerInfo}}">
+      <view class="partner-info-item">
+        <text class="info-label">📅 计划日期</text>
+        <text class="info-value">{{note.partnerInfo.plannedDate}}</text>
+      </view>
+      <view class="partner-info-item">
+        <text class="info-label">👥 已报名</text>
+        <text class="info-value highlight">{{note.partnerInfo.currentJoiners}}/{{note.partnerInfo.maxJoiners}}人</text>
+      </view>
+      <view class="partner-tags">
+        <text class="partner-tag" wx:for="{{note.partnerInfo.tags}}" wx:key="*this">
+          #{{item}}
+        </text>
+      </view>
+      <view class="partner-status">
+        <text class="status-dot" wx:if="{{note.partnerInfo.status === 'open'}}"></text>
+        <text class="status-text">{{note.partnerInfo.status === 'open' ? '招募中' : '已满员'}}</text>
+      </view>
+    </view>
+
+    <!-- 发布时间和标签 -->
+    <view class="note-meta">
+      <text class="publish-time">📅 {{note.createTimeText}}</text>
+      <view class="note-tags">
+        <text class="note-tag" wx:for="{{note.tags}}" wx:key="*this">
+          #{{item}}
+        </text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 评论区入口 -->
+  <view class="comments-section" bindtap="showAllComments">
+    <view class="comments-header">
+      <text>💬 评论区 ({{note.comments}}条)</text>
+      <text class="view-all">查看全部 ›</text>
+    </view>
+
+    <!-- 预览前3条评论 -->
+    <view class="comment-preview" wx:for="{{previewComments}}" wx:key="id">
+      <view class="comment-user">
+        <image class="comment-avatar" src="{{item.user.avatar}}" />
+        <text class="comment-name">{{item.user.nickname}}</text>
+      </view>
+      <view class="comment-content">{{item.content}}</view>
+      <view class="comment-meta">
+        <text class="comment-likes">👍 {{item.likes}}</text>
+        <text class="comment-time">{{item.timeText}}</text>
+      </view>
+    </view>
+
+    <view class="view-all-comments" wx:if="{{note.comments > 3}}">
+      查看全部{{note.comments}}条评论 ›
+    </view>
+  </view>
+
+  <!-- 底部互动栏 -->
+  <view class="action-bar">
+    <view class="action-item" bindtap="toggleLike">
+      <text class="action-icon">{{note.isLiked ? '💙' : '🤍'}}</text>
+      <text class="action-text">{{note.likes}}</text>
+    </view>
+    <view class="action-item" bindtap="toggleCollect">
+      <text class="action-icon">{{note.isCollected ? '🐱⭐' : '⭐'}}</text>
+      <text class="action-text">收藏</text>
+    </view>
+    <view class="action-item" bindtap="showAllComments">
+      <text class="action-icon">💬</text>
+      <text class="action-text">{{note.comments}}</text>
+    </view>
+    <view class="action-item" bindtap="onShare">
+      <text class="action-icon">↗️</text>
+      <text class="action-text">分享</text>
+    </view>
+
+    <!-- 找搭子专属按钮 -->
+    <button class="partner-apply-btn" wx:if="{{note.type === 'partner' && note.partnerInfo.status === 'open'}}" bindtap="applyPartner">
+      我要申请
+    </button>
+    <button class="partner-apply-btn disabled" wx:if="{{note.type === 'partner' && note.partnerInfo.status !== 'open'}}" disabled>
+      已满员
+    </button>
+  </view>
+</view>

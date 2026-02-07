@@ -1,0 +1,351 @@
+/* pages/note-detail/note-detail.wxss */
+
+page {
+  background-color: #FAFBFD;
+  padding-bottom: 120rpx;
+}
+
+/* ========== 图片轮播 ========== */
+.image-swiper {
+  position: relative;
+  width: 100%;
+  height: 750rpx;
+  background: #F0F4F8;
+}
+
+.swiper-image {
+  width: 100%;
+  height: 100%;
+}
+
+.image-count {
+  position: absolute;
+  bottom: 20rpx;
+  right: 20rpx;
+  padding: 8rpx 20rpx;
+  background: rgba(0, 0, 0, 0.5);
+  color: #FFFFFF;
+  font-size: 24rpx;
+  border-radius: 24rpx;
+}
+
+/* ========== 作者信息 ========== */
+.author-section {
+  background: #FFFFFF;
+  padding: 24rpx 32rpx;
+  border-bottom: 1px solid #E8F4FD;
+}
+
+.author-main {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.author-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  border: 3rpx solid #E8F4FD;
+}
+
+.author-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.author-name {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #2C3E50;
+}
+
+.author-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.author-tag {
+  padding: 6rpx 16rpx;
+  background: #E8F4FD;
+  color: #5B9BD5;
+  font-size: 22rpx;
+  border-radius: 8rpx;
+}
+
+.follow-btn {
+  padding: 12rpx 32rpx;
+  background: linear-gradient(135deg, #5B9BD5 0%, #4A90E2 100%);
+  color: #FFFFFF;
+  font-size: 26rpx;
+  border: none;
+  border-radius: 24rpx;
+}
+
+/* ========== 关联滑雪场 ========== */
+.resort-section {
+  background: #FFFFFF;
+  padding: 24rpx 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  border-bottom: 1px solid #E1E8ED;
+}
+
+.resort-icon {
+  font-size: 32rpx;
+}
+
+.resort-name {
+  flex: 1;
+  font-size: 28rpx;
+  color: #4A90E2;
+  font-weight: 500;
+}
+
+.resort-arrow {
+  color: #95A5A6;
+}
+
+/* ========== 内容区域 ========== */
+.content-section {
+  background: #FFFFFF;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.note-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #2C3E50;
+  line-height: 1.4;
+  margin-bottom: 24rpx;
+}
+
+.note-content {
+  font-size: 28rpx;
+  color: #2C3E50;
+  line-height: 1.8;
+  margin-bottom: 24rpx;
+}
+
+/* 找搭子信息卡片 */
+.partner-info-card {
+  background: linear-gradient(135deg, #E8F4FD 0%, #F0F4F8 100%);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.partner-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.info-label {
+  font-size: 26rpx;
+  color: #7F8C8D;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: #2C3E50;
+  font-weight: 500;
+}
+
+.info-value.highlight {
+  color: #FF8B5A;
+  font-weight: 600;
+}
+
+.partner-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.partner-tag {
+  padding: 8rpx 20rpx;
+  background: #FFFFFF;
+  color: #4ECDC4;
+  font-size: 24rpx;
+  border-radius: 8rpx;
+  font-weight: 500;
+}
+
+.partner-status {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.status-dot {
+  width: 16rpx;
+  height: 16rpx;
+  background: #4ECDC4;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.status-text {
+  font-size: 26rpx;
+  color: #4ECDC4;
+  font-weight: 500;
+}
+
+/* 笔记元信息 */
+.note-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1px solid #E1E8ED;
+}
+
+.publish-time {
+  font-size: 24rpx;
+  color: #95A5A6;
+}
+
+.note-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.note-tag {
+  padding: 6rpx 16rpx;
+  background: #F7F9FA;
+  color: #5B9BD5;
+  font-size: 24rpx;
+  border-radius: 8rpx;
+}
+
+/* ========== 评论区 ========== */
+.comments-section {
+  background: #FFFFFF;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.comments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.view-all {
+  font-size: 26rpx;
+  color: #5B9BD5;
+}
+
+.comment-preview {
+  padding: 20rpx 0;
+  border-bottom: 1px solid #F0F4F8;
+}
+
+.comment-user {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.comment-avatar {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+}
+
+.comment-name {
+  font-size: 26rpx;
+  color: #2C3E50;
+  font-weight: 500;
+}
+
+.comment-content {
+  font-size: 28rpx;
+  color: #2C3E50;
+  line-height: 1.6;
+  margin-bottom: 12rpx;
+}
+
+.comment-meta {
+  display: flex;
+  gap: 24rpx;
+}
+
+.comment-likes,
+.comment-time {
+  font-size: 22rpx;
+  color: #95A5A6;
+}
+
+.view-all-comments {
+  text-align: center;
+  padding: 24rpx 0;
+  color: #5B9BD5;
+  font-size: 28rpx;
+}
+
+/* ========== 底部互动栏 ========== */
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border-top: 1px solid #E1E8ED;
+  padding: 16rpx 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  flex: 1;
+}
+
+.action-icon {
+  font-size: 44rpx;
+}
+
+.action-text {
+  font-size: 22rpx;
+  color: #7F8C8D;
+}
+
+.partner-apply-btn {
+  flex: 2;
+  padding: 20rpx;
+  background: linear-gradient(135deg, #FF8B5A 0%, #FF6B35 100%);
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: 500;
+  border: none;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 53, 0.3);
+}
+
+.partner-apply-btn.disabled {
+  background: #E1E8ED;
+  color: #95A5A6;
+  box-shadow: none;
+}

@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>滑雪场助手 - 完整预览</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #F5F5F5;
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .phone-frame {
+      background: white;
+      min-height: 100vh;
+      position: relative;
+      padding-bottom: 70px;
+    }
+
+    /* Tab页面容器 */
+    .tab-content {
+      display: none;
+      min-height: calc(100vh - 70px);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* ====== 底部Tab导航 ====== */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      height: 60px;
+      background: white;
+      border-top: 1px solid #E0E0E0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #95A5A6;
+    }
+
+    .tab-item.active {
+      color: #5B9BD5;
+    }
+
+    .tab-icon {
+      font-size: 24px;
+      margin-bottom: 2px;
+    }
+
+    .tab-text {
+      font-size: 11px;
+    }
+
+    /* ====== 发现页样式 ====== */
+    .departure-section {
+      background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+      padding: 12px 16px;
+    }
+
+    .departure-label {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 6px;
+    }
+
+    .departure-input-wrapper {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      padding: 10px 16px;
+    }
+
+    .departure-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: white;
+      outline: none;
+    }
+
+    .departure-input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .search-bar {
+      background: white;
+      padding: 12px 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .search-input-wrapper {
+      display: flex;
+      align-items: center;
+      background: #F5F5F5;
+      border-radius: 24px;
+      padding: 10px 16px;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .filter-bar {
+      display: flex;
+      background: white;
+      padding: 8px 16px;
+      gap: 8px;
+    }
+
+    .filter-item {
+      padding: 8px 16px;
+      background: #F5F5F5;
+      border-radius: 16px;
+      font-size: 14px;
+      color: #666;
+      cursor: pointer;
+    }
+
+    .filter-item.active {
+      background: #1E88E5;
+      color: white;
+    }
+
+    .location-info {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      background: #E8F5E9;
+      font-size: 13px;
+      color: #2E7D32;
+    }
+
+    .resorts-list {
+      padding: 0 16px 16px;
+    }
+
+    .resort-card {
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .resort-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .resort-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .resort-type-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      color: white;
+      background: rgba(0,0,0,0.6);
+    }
+
+    .resort-info {
+      padding: 12px;
+    }
+
+    .resort-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .resort-location {
+      font-size: 12px;
+      color: #757575;
+      margin-bottom: 8px;
+    }
+
+    .resort-details {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .price {
+      font-size: 18px;
+      color: #F44336;
+      font-weight: bold;
+    }
+
+    /* ====== 笔记页样式 ====== */
+    .nav-bar {
+      background: white;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #F0F0F0;
+    }
+
+    .location {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .location-text {
+      margin: 0 4px;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 16px;
+    }
+
+    .category-tabs {
+      display: flex;
+      background: white;
+      padding: 8px 16px;
+      border-bottom: 1px solid #F0F0F0;
+      overflow-x: auto;
+    }
+
+    .tab-item {
+      padding: 8px 16px;
+      font-size: 14px;
+      color: #666;
+      cursor: pointer;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .tab-item.active {
+      color: #5B9BD5;
+      font-weight: 500;
+    }
+
+    .tab-indicator {
+      position: absolute;
+      bottom: -9px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 3px;
+      background: #5B9BD5;
+      border-radius: 2px;
+    }
+
+    .notes-container {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      background: #FAFBFD;
+      min-height: calc(100vh - 200px);
+    }
+
+    .notes-column {
+      flex: 1;
+    }
+
+    .note-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 8px rgba(91, 155, 213, 0.08);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .note-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(91, 155, 213, 0.15);
+    }
+
+    .note-cover {
+      width: 100%;
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .note-type-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      color: white;
+      background: rgba(91, 155, 213, 0.9);
+    }
+
+    .note-title {
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #2C3E50;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .note-author {
+      display: flex;
+      align-items: center;
+      padding: 0 10px 10px;
+    }
+
+    .author-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .author-name {
+      font-size: 12px;
+      color: #7F8C8D;
+    }
+
+    .note-stats {
+      display: flex;
+      gap: 12px;
+      padding: 8px 10px;
+      border-top: 1px solid #F0F0F0;
+      font-size: 12px;
+      color: #95A5A6;
+    }
+
+    .publish-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #FF8B5A 0%, #FF6B35 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+      cursor: pointer;
+      z-index: 999;
+      transition: transform 0.2s;
+    }
+
+    .publish-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* ====== 我的页样式 ====== */
+    .user-card {
+      background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+      margin: 12px;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
+    }
+
+    .user-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .user-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      margin-right: 16px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .user-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .user-location {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .ski-info {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 14px;
+      color: white;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .user-stats {
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+    }
+
+    .stat-item {
+      flex: 1;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .menu-section {
+      background: white;
+      margin: 12px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #F0F0F0;
+      cursor: pointer;
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .menu-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .btn-logout {
+      margin: 12px;
+      padding: 14px;
+      background: white;
+      border: 1px solid #E0E0E0;
+      border-radius: 12px;
+      font-size: 15px;
+      color: #F44336;
+      cursor: pointer;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .empty-text {
+      font-size: 16px;
+      color: #757575;
+      margin-bottom: 8px;
+    }
+
+    .empty-hint {
+      font-size: 14px;
+      color: #9E9E9E;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <!-- 发现页 -->
+    <div id="tab-discover" class="tab-content active">
+      <div class="departure-section">
+        <div class="departure-label">📍 出发城市</div>
+        <div class="departure-input-wrapper">
+          <input type="text" class="departure-input" placeholder="输入你的出发城市" id="departureCity">
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <div class="search-input-wrapper">
+          <span>🔍</span>
+          <input type="text" class="search-input" placeholder="搜索目标城市或滑雪场" id="searchKeyword">
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-item active" onclick="filterResorts('all', this)">全部</div>
+        <div class="filter-item" onclick="filterResorts('indoor', this)">室内</div>
+        <div class="filter-item" onclick="filterResorts('outdoor', this)">室外</div>
+      </div>
+
+      <div class="location-info">
+        <span>📍</span>
+        <span>从北京出发，按距离排序</span>
+      </div>
+
+      <div class="resorts-list" id="resortsList">
+        <!-- 滑雪场卡片将通过JS动态生成 -->
+      </div>
+    </div>
+
+    <!-- 笔记页 -->
+    <div id="tab-community" class="tab-content">
+      <div class="nav-bar">
+        <div class="location">
+          <span>📍</span>
+          <span class="location-text">北京</span>
+          <span>›</span>
+        </div>
+        <div class="nav-actions">
+          <span style="cursor:pointer">🔍</span>
+          <span style="cursor:pointer">📩</span>
+        </div>
+      </div>
+
+      <div class="category-tabs">
+        <div class="tab-item active" onclick="filterNotes('all', this)">全部</div>
+        <div class="tab-item" onclick="filterNotes('experience', this)">体验</div>
+        <div class="tab-item" onclick="filterNotes('partner', this)">找搭子</div>
+        <div class="tab-item" onclick="filterNotes('recommended', this)">推荐</div>
+      </div>
+
+      <div class="notes-container">
+        <div class="notes-column" id="leftNotes"></div>
+        <div class="notes-column" id="rightNotes"></div>
+      </div>
+
+      <div class="publish-btn">✏️🐱</div>
+    </div>
+
+    <!-- 我的页 -->
+    <div id="tab-profile" class="tab-content">
+      <div class="user-card">
+        <div class="user-header">
+          <img src="https://i.pravatar.cc/150?img=32" class="user-avatar" alt="avatar">
+          <div>
+            <div class="user-name">滑雪爱好者</div>
+            <div class="user-location">📍 北京市</div>
+          </div>
+        </div>
+
+        <div class="ski-info">
+          <div class="info-row">
+            <span>滑雪类型</span>
+            <span>双板</span>
+          </div>
+          <div class="info-row">
+            <span>滑雪时长</span>
+            <span>3个雪季</span>
+          </div>
+          <div class="info-row">
+            <span>滑雪水平</span>
+            <span>中级</span>
+          </div>
+        </div>
+
+        <div class="user-stats">
+          <div class="stat-item">
+            <div class="stat-value">12</div>
+            <div class="stat-label">评价</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">5</div>
+            <div class="stat-label">发起</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">89</div>
+            <div class="stat-label">粉丝</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-item">
+          <div class="menu-item-left">
+            <span>📝</span>
+            <span>我的评价</span>
+          </div>
+          <span>›</span>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-left">
+            <span>👥</span>
+            <span>我的搭子</span>
+          </div>
+          <span>›</span>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-left">
+            <span>⭐</span>
+            <span>收藏的滑雪场</span>
+          </div>
+          <span>›</span>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-item">
+          <div class="menu-item-left">
+            <span>⚙️</span>
+            <span>设置</span>
+          </div>
+          <span>›</span>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-left">
+            <span>ℹ️</span>
+            <span>关于</span>
+          </div>
+          <span>›</span>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-left">
+            <span>💬</span>
+            <span>反馈</span>
+          </div>
+          <span>›</span>
+        </div>
+      </div>
+
+      <button class="btn-logout">退出登录</button>
+    </div>
+
+    <!-- 底部Tab导航 -->
+    <div class="tab-bar">
+      <div class="tab-item active" onclick="switchTab('discover', this)">
+        <div class="tab-icon">🎿</div>
+        <div class="tab-text">发现</div>
+      </div>
+      <div class="tab-item" onclick="switchTab('community', this)">
+        <div class="tab-icon">📝</div>
+        <div class="tab-text">笔记</div>
+      </div>
+      <div class="tab-item" onclick="switchTab('profile', this)">
+        <div class="tab-icon">👤</div>
+        <div class="tab-text">我的</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 滑雪场数据
+    const resortsData = [
+      {
+        id: 1,
+        name: '万龙滑雪场',
+        city: '张家口',
+        country: '中国',
+        type: 'outdoor',
+        distance: 150,
+        trails: 32,
+        elevation: 2110,
+        season: '11月-3月',
+        price: 880,
+        priceUnit: '天',
+        rating: 4.7,
+        image: 'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=800'
+      },
+      {
+        id: 2,
+        name: '太舞滑雪场',
+        city: '张家口',
+        country: '中国',
+        type: 'outdoor',
+        distance: 155,
+        trails: 28,
+        elevation: 2160,
+        season: '11月-3月',
+        price: 780,
+        priceUnit: '天',
+        rating: 4.6,
+        image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800'
+      },
+      {
+        id: 3,
+        name: '哈尔滨融创雪世界',
+        city: '哈尔滨',
+        country: '中国',
+        type: 'indoor',
+        distance: 1200,
+        trails: 8,
+        elevation: 0,
+        season: '全年开放',
+        price: 468,
+        priceUnit: '4小时',
+        rating: 4.3,
+        image: 'https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=800'
+      },
+      {
+        id: 4,
+        name: '广州融创雪世界',
+        city: '广州',
+        country: '中国',
+        type: 'indoor',
+        distance: 1900,
+        trails: 6,
+        elevation: 0,
+        season: '全年开放',
+        price: 498,
+        priceUnit: '4小时',
+        rating: 4.2,
+        image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=800'
+      }
+    ];
+
+    // 笔记数据
+    const notesData = [
+      {
+        id: 1001,
+        type: 'experience',
+        title: '万龙周末两天一夜，雪质绝了！',
+        coverImage: 'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=600',
+        author: { nickname: '单板小王', avatar: 'https://i.pravatar.cc/150?img=11' },
+        likes: 234,
+        comments: 45
+      },
+      {
+        id: 1002,
+        type: 'partner',
+        title: '太舞2.15-2.17 求搭子，可开车',
+        coverImage: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=600',
+        author: { nickname: '滑雪达人', avatar: 'https://i.pravatar.cc/150?img=12' },
+        partnerInfo: { currentJoiners: 1, maxJoiners: 3 }
+      },
+      {
+        id: 1003,
+        type: 'experience',
+        title: '哈尔滨融创室内滑雪初体验',
+        coverImage: 'https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=600',
+        author: { nickname: '小白学滑雪', avatar: 'https://i.pravatar.cc/150?img=13' },
+        likes: 156,
+        comments: 23
+      },
+      {
+        id: 1004,
+        type: 'partner',
+        title: '南山本周六，中级水平求组队',
+        coverImage: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=600',
+        author: { nickname: '周末滑雪党', avatar: 'https://i.pravatar.cc/150?img=14' },
+        partnerInfo: { currentJoiners: 2, maxJoiners: 4 }
+      },
+      {
+        id: 1005,
+        type: 'experience',
+        title: '云顶夜景拍照攻略📸',
+        coverImage: 'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=600',
+        author: { nickname: '摄影控', avatar: 'https://i.pravatar.cc/150?img=15' },
+        likes: 312,
+        comments: 67
+      },
+      {
+        id: 1006,
+        type: 'experience',
+        title: '富龙温泉+滑雪，完美周末！',
+        coverImage: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=600',
+        author: { nickname: '休闲滑雪', avatar: 'https://i.pravatar.cc/150?img=16' },
+        likes: 189,
+        comments: 34
+      }
+    ];
+
+    // 当前筛选的笔记
+    let currentNotes = notesData;
+    let currentFilter = 'all';
+
+    // Tab切换
+    function switchTab(tabName, element) {
+      // 隐藏所有Tab内容
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // 显示选中的Tab内容
+      document.getElementById('tab-' + tabName).classList.add('active');
+
+      // 更新Tab导航状态
+      document.querySelectorAll('.tab-bar .tab-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      element.classList.add('active');
+    }
+
+    // 渲染滑雪场列表
+    function renderResorts(filterType = 'all') {
+      const list = document.getElementById('resortsList');
+      let filtered = resortsData;
+
+      if (filterType !== 'all') {
+        filtered = resortsData.filter(r => r.type === filterType);
+      }
+
+      list.innerHTML = filtered.map(resort => `
+        <div class="resort-card">
+          <div style="position:relative">
+            <img src="${resort.image}" class="resort-image" alt="${resort.name}">
+            <div class="resort-type-tag">${resort.type === 'indoor' ? '室内' : '室外'}</div>
+          </div>
+          <div class="resort-info">
+            <div class="resort-name">${resort.name}</div>
+            <div class="resort-location">📍 ${resort.city}, ${resort.country} | ⭐ ${resort.rating}</div>
+            <div class="resort-details">
+              <span>雪道: ${resort.trails}条</span>
+              <span>海拔: ${resort.elevation}m</span>
+              <span>雪季: ${resort.season}</span>
+            </div>
+            <div class="price">¥${resort.price}/${resort.priceUnit}</div>
+          </div>
+        </div>
+      `).join('');
+
+      if (filtered.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🎿</div>
+            <div class="empty-text">没有找到相关滑雪场</div>
+            <div class="empty-hint">试试搜索其他城市吧</div>
+          </div>
+        `;
+      }
+    }
+
+    // 筛选滑雪场
+    function filterResorts(type, element) {
+      document.querySelectorAll('.filter-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      element.classList.add('active');
+      renderResorts(type);
+    }
+
+    // 筛选笔记
+    function filterNotes(type, element) {
+      document.querySelectorAll('.category-tabs .tab-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      element.classList.add('active');
+
+      currentFilter = type;
+      if (type === 'all') {
+        currentNotes = notesData;
+      } else if (type === 'experience') {
+        currentNotes = notesData.filter(n => n.type === 'experience');
+      } else if (type === 'partner') {
+        currentNotes = notesData.filter(n => n.type === 'partner');
+      } else {
+        currentNotes = notesData.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+      }
+
+      renderNotes();
+    }
+
+    // 渲染笔记（瀑布流）
+    function renderNotes() {
+      const leftColumn = document.getElementById('leftNotes');
+      const rightColumn = document.getElementById('rightNotes');
+
+      const leftNotes = [];
+      const rightNotes = [];
+
+      // 简单的瀑布流分配
+      currentNotes.forEach((note, index) => {
+        if (index % 2 === 0) {
+          leftNotes.push(note);
+        } else {
+          rightNotes.push(note);
+        }
+      });
+
+      leftColumn.innerHTML = leftNotes.map(note => createNoteCard(note)).join('');
+      rightColumn.innerHTML = rightNotes.map(note => createNoteCard(note)).join('');
+
+      if (currentNotes.length === 0) {
+        leftColumn.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-icon">🐱⛷️</div>
+            <div class="empty-text">还没有笔记哦～</div>
+            <div class="empty-hint">快来发布第一条笔记吧！</div>
+          </div>
+        `;
+      }
+    }
+
+    // 创建笔记卡片
+    function createNoteCard(note) {
+      const typeLabel = note.type === 'experience' ? '🐱❄️ 体验' : '🐱👥 搭子';
+      const stats = note.type === 'experience'
+        ? `<span>❤️ ${note.likes}</span><span>💬 ${note.comments}</span>`
+        : `<span>👥 ${note.partnerInfo?.currentJoiners || 0}/${note.partnerInfo?.maxJoiners || 0}人</span>`;
+
+      return `
+        <div class="note-card">
+          <div class="note-cover" style="background-image: url(${note.coverImage})">
+            <div class="note-type-badge">${typeLabel}</div>
+          </div>
+          <div class="note-title">${note.title}</div>
+          <div class="note-author">
+            <img src="${note.author.avatar}" class="author-avatar" alt="avatar">
+            <span class="author-name">${note.author.nickname}</span>
+          </div>
+          <div class="note-stats">
+            ${stats}
+          </div>
+        </div>
+      `;
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderResorts();
+      renderNotes();
+    });
+  </script>
+</body>
+</html>

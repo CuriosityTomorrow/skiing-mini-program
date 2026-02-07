@@ -1,0 +1,149 @@
+<!--pages/compare/compare.wxml-->
+<view class="container">
+  <!-- 顶部操作栏 -->
+  <view class="header-actions">
+    <view class="selected-count">
+      已选择 {{selectedResorts.length}} 个滑雪场
+    </view>
+    <view class="action-buttons">
+      <button class="btn-share" open-type="share">
+        <image class="btn-icon" src="/images/share-white.png"></image>
+        分享
+      </button>
+      <button class="btn-clear" bindtap="onClearAll">清空</button>
+    </view>
+  </view>
+
+  <!-- 对比卡片列表 -->
+  <scroll-view class="compare-list" scroll-x enhanced show-scrollbar="{{false}}">
+    <block wx:for="{{selectedResorts}}" wx:key="id">
+      <view class="compare-card">
+        <!-- 移除按钮 -->
+        <view class="remove-btn" bindtap="onRemoveResort" data-id="{{item.id}}">
+          <image class="remove-icon" src="/images/close-white.png"></image>
+        </view>
+
+        <!-- 滑雪场图片 -->
+        <view class="resort-image-wrapper" bindtap="onViewResort" data-id="{{item.id}}">
+          <image class="resort-image" src="{{item.images[0]}}" mode="aspectFill"></image>
+          <view class="resort-type-badge {{item.type === 'indoor' ? 'indoor' : 'outdoor'}}">
+            {{item.type === 'indoor' ? '室内' : '室外'}}
+          </view>
+        </view>
+
+        <!-- 滑雪场名称 -->
+        <view class="resort-name" bindtap="onViewResort" data-id="{{item.id}}">{{item.name}}</view>
+
+        <!-- 基本信息对比 -->
+        <view class="compare-info">
+          <view class="info-item">
+            <text class="info-label">位置</text>
+            <text class="info-value">{{item.city}}, {{item.country}}</text>
+          </view>
+
+          <view class="info-item">
+            <text class="info-label">评分</text>
+            <view class="rating-wrapper">
+              <image class="star-icon" src="/images/star.png"></image>
+              <text class="rating-value">{{item.rating}}</text>
+              <text class="review-count">({{item.reviewCount}}条)</text>
+            </view>
+          </view>
+
+          <view class="info-item">
+            <text class="info-label">价格</text>
+            <view class="price-wrapper">
+              <text class="price-value">¥{{item.price}}</text>
+              <text class="price-unit">/{{item.priceUnit}}</text>
+            </view>
+          </view>
+
+          <view class="info-item">
+            <text class="info-label">海拔</text>
+            <text class="info-value">{{item.elevation}}m</text>
+          </view>
+
+          <view class="info-item">
+            <text class="info-label">雪道数</text>
+            <text class="info-value">{{item.trails}}条</text>
+          </view>
+
+          <view class="info-item">
+            <text class="info-label">雪季</text>
+            <text class="info-value">{{item.season}}</text>
+          </view>
+
+          <!-- 雪道分布 -->
+          <view class="info-item">
+            <text class="info-label">雪道分布</text>
+            <view class="trails-distribution">
+              <view class="trail-item">
+                <text class="trail-label">初级</text>
+                <text class="trail-percent">{{item.trailsDistribution.初级}}</text>
+              </view>
+              <view class="trail-item">
+                <text class="trail-label">中级</text>
+                <text class="trail-percent">{{item.trailsDistribution.中级}}</text>
+              </view>
+              <view class="trail-item">
+                <text class="trail-label">高级</text>
+                <text class="trail-percent">{{item.trailsDistribution.高级}}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 交通方式 -->
+          <view class="info-item">
+            <text class="info-label">交通方式</text>
+            <view class="transport-list">
+              <block wx:for="{{item.transportation}}" wx:key="type" wx:for-item="trans" wx:for-index="idx">
+                <view class="transport-item">
+                  <text class="transport-type">{{trans.type}}</text>
+                  <text class="transport-time">{{trans.duration}}</text>
+                </view>
+              </block>
+            </view>
+          </view>
+
+          <!-- 设施 -->
+          <view class="info-item">
+            <text class="info-label">设施</text>
+            <view class="facilities-list">
+              <block wx:for="{{item.facilities}}" wx:key="*this" wx:for-item="facility" wx:for-index="idx">
+                <text class="facility-tag">{{facility}}</text>
+              </block>
+            </view>
+          </view>
+
+          <!-- 特色 -->
+          <view wx:if="{{item.features && item.features.length > 0}}" class="info-item">
+            <text class="info-label">特色</text>
+            <view class="features-list">
+              <block wx:for="{{item.features}}" wx:key="*this" wx:for-item="feature" wx:for-index="idx">
+                <text class="feature-tag">{{feature}}</text>
+              </block>
+            </view>
+          </view>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="card-actions">
+          <button class="btn-detail" bindtap="onViewResort" data-id="{{item.id}}">查看详情</button>
+          <button class="btn-book" open-type="contact">咨询预订</button>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- 底部提示 -->
+  <view class="footer-tip">
+    <text>左右滑动查看更多对比项</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{selectedResorts.length === 0}}" class="empty-state">
+    <image class="empty-icon" src="/images/empty-compare.png"></image>
+    <text class="empty-text">还没有选择滑雪场</text>
+    <button class="btn-go-search" bindtap="onGoSearch">去搜索滑雪场</button>
+  </view>
+</view>

@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/community/community",
+    "pages/profile/profile",
+    "pages/compare/compare",
+    "pages/resort/resort",
+    "pages/note-detail/note-detail",
+    "pages/note-publish/note-publish"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTitleText": "滑雪场助手",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FAFBFD"
+  },
+  "tabBar": {
+    "color": "#95A5A6",
+    "selectedColor": "#5B9BD5",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "发现"
+      },
+      {
+        "pagePath": "pages/community/community",
+        "text": "笔记"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于搜索附近的滑雪场"
+    }
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

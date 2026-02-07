@@ -1,0 +1,237 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="user-card">
+    <!-- 未登录状态 -->
+    <view wx:if="{{!userInfo}}" class="not-login">
+      <image class="default-avatar" src="/images/default-avatar.png"></image>
+      <button class="btn-login" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+        授权登录
+      </button>
+      <text class="login-hint">登录后可以发布评价、找搭子</text>
+    </view>
+
+    <!-- 已登录状态 -->
+    <view wx:else class="user-info-wrapper">
+      <view class="user-header">
+        <image class="user-avatar" src="{{userInfo.avatar || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="user-basic">
+          <view class="user-name-row">
+            <text class="user-nickname">{{userInfo.nickname}}</text>
+            <view class="user-badges">
+              <text wx:if="{{userInfo.gender}}" class="badge badge-gender">{{userInfo.gender}}</text>
+              <text wx:if="{{userInfo.age}}" class="badge badge-age">{{userInfo.age}}岁</text>
+            </view>
+          </view>
+          <text class="user-location" wx:if="{{userInfo.location}}">
+            <image class="location-icon" src="/images/location-small.png"></image>
+            {{userInfo.location}}
+          </text>
+        </view>
+        <view class="edit-profile-btn" bindtap="onEditProfile">
+          <image class="edit-icon" src="/images/edit.png"></image>
+        </view>
+      </view>
+
+      <!-- 滑雪信息 -->
+      <view class="ski-info">
+        <view class="info-row">
+          <text class="info-label">滑雪类型</text>
+          <view class="info-value">
+            <text class="ski-type-badge">{{userInfo.skiTypeLabel || '未设置'}}</text>
+          </view>
+        </view>
+        <view class="info-row">
+          <text class="info-label">滑雪时长</text>
+          <text class="info-value">{{userInfo.experience || '未设置'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">滑雪水平</text>
+          <view class="info-value">
+            <text class="level-badge">{{userInfo.levelLabel || '未设置'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 统计数据 -->
+      <view class="user-stats">
+        <view class="stat-item" bindtap="onMyReviews">
+          <text class="stat-value">{{stats.reviewCount}}</text>
+          <text class="stat-label">评价</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item" bindtap="onMyPartners">
+          <text class="stat-value">{{stats.partnerCount}}</text>
+          <text class="stat-label">发起</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{stats.followerCount}}</text>
+          <text class="stat-label">粉丝</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="onMyReviews">
+      <view class="menu-item-left">
+        <image class="menu-icon" src="/images/review.png"></image>
+        <text class="menu-text">我的评价</text>
+      </view>
+      <image class="menu-arrow" src="/images/arrow-right.png"></image>
+    </view>
+    <view class="menu-item" bindtap="onMyPartners">
+      <view class="menu-item-left">
+        <image class="menu-icon" src="/images/partners.png"></image>
+        <text class="menu-text">我的搭子</text>
+      </view>
+      <image class="menu-arrow" src="/images/arrow-right.png"></image>
+    </view>
+    <view class="menu-item" bindtap="onFavorites">
+      <view class="menu-item-left">
+        <image class="menu-icon" src="/images/favorite.png"></image>
+        <text class="menu-text">收藏的滑雪场</text>
+      </view>
+      <image class="menu-arrow" src="/images/arrow-right.png"></image>
+    </view>
+  </view>
+
+  <!-- 其他菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="onSettings">
+      <view class="menu-item-left">
+        <image class="menu-icon" src="/images/settings.png"></image>
+        <text class="menu-text">设置</text>
+      </view>
+      <image class="menu-arrow" src="/images/arrow-right.png"></image>
+    </view>
+    <view class="menu-item" bindtap="onAbout">
+      <view class="menu-item-left">
+        <image class="menu-icon" src="/images/about.png"></image>
+        <text class="menu-text">关于</text>
+      </view>
+      <image class="menu-arrow" src="/images/arrow-right.png"></image>
+    </view>
+    <view class="menu-item" bindtap="onFeedback">
+      <view class="menu-item-left">
+        <image class="menu-icon" src="/images/feedback.png"></image>
+        <text class="menu-text">反馈</text>
+      </view>
+      <image class="menu-arrow" src="/images/arrow-right.png"></image>
+    </view>
+  </view>
+
+  <!-- 退出登录按钮 -->
+  <button wx:if="{{userInfo}}" class="btn-logout" bindtap="onLogout">
+    退出登录
+  </button>
+
+  <!-- 编辑资料弹窗 -->
+  <view class="modal {{showEditModal ? 'show' : ''}}" bindtap="onCloseEditModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">编辑资料</text>
+        <image class="modal-close" src="/images/close.png" bindtap="onCloseEditModal"></image>
+      </view>
+
+      <scroll-view class="modal-body" scroll-y>
+        <!-- 昵称 -->
+        <view class="form-item">
+          <text class="form-label">昵称</text>
+          <input class="form-input" value="{{editForm.nickname}}" placeholder="请输入昵称" bindinput="onNicknameInput" />
+        </view>
+
+        <!-- 性别 -->
+        <view class="form-item">
+          <text class="form-label">性别</text>
+          <view class="gender-selector">
+            <view class="gender-option {{editForm.gender === '男' ? 'active' : ''}}" bindtap="onGenderSelect" data-gender="男">
+              <image class="gender-icon" src="/images/male.png"></image>
+              <text>男</text>
+            </view>
+            <view class="gender-option {{editForm.gender === '女' ? 'active' : ''}}" bindtap="onGenderSelect" data-gender="女">
+              <image class="gender-icon" src="/images/female.png"></image>
+              <text>女</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 年龄 -->
+        <view class="form-item">
+          <text class="form-label">年龄</text>
+          <input class="form-input" type="number" value="{{editForm.age}}" placeholder="请输入年龄" bindinput="onAgeInput" />
+        </view>
+
+        <!-- 所在地 -->
+        <view class="form-item">
+          <text class="form-label">所在地</text>
+          <input class="form-input" value="{{editForm.location}}" placeholder="请输入城市" bindinput="onLocationInput" />
+        </view>
+
+        <!-- 滑雪类型 -->
+        <view class="form-item">
+          <text class="form-label">滑雪类型</text>
+          <view class="type-selector">
+            <view
+              class="type-option {{editForm.skiType === 1 ? 'active' : ''}}"
+              bindtap="onSkiTypeSelect"
+              data-type="1"
+            >
+              单板
+            </view>
+            <view
+              class="type-option {{editForm.skiType === 2 ? 'active' : ''}}"
+              bindtap="onSkiTypeSelect"
+              data-type="2"
+            >
+              双板
+            </view>
+            <view
+              class="type-option {{editForm.skiType === 3 ? 'active' : ''}}"
+              bindtap="onSkiTypeSelect"
+              data-type="3"
+            >
+              都玩
+            </view>
+          </view>
+        </view>
+
+        <!-- 滑雪时长 -->
+        <view class="form-item">
+          <text class="form-label">滑雪时长</text>
+          <input class="form-input" value="{{editForm.experience}}" placeholder="如：5个雪季" bindinput="onExperienceInput" />
+        </view>
+
+        <!-- 滑雪水平 -->
+        <view class="form-item">
+          <text class="form-label">滑雪水平</text>
+          <view class="level-selector">
+            <block wx:for="{{skillLevels}}" wx:key="id">
+              <view
+                class="level-option {{editForm.level === item.id ? 'active' : ''}}"
+                bindtap="onLevelSelect"
+                data-id="{{item.id}}"
+              >
+                <text class="level-label">{{item.label}}</text>
+                <text class="level-desc">{{item.description}}</text>
+              </view>
+            </block>
+          </view>
+        </view>
+
+        <!-- 微信号 -->
+        <view class="form-item">
+          <text class="form-label">微信号</text>
+          <input class="form-input" value="{{editForm.wechat}}" placeholder="方便其他雪友联系你" bindinput="onWechatInput" />
+        </view>
+      </scroll-view>
+
+      <view class="modal-footer">
+        <button class="btn-cancel" bindtap="onCloseEditModal">取消</button>
+        <button class="btn-confirm" bindtap="onSaveProfile">保存</button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,144 @@
+<!--pages/community/community.wxml-->
+<view class="community-page">
+  <!-- 顶部导航栏 -->
+  <view class="nav-bar">
+    <view class="location" bindtap="changeLocation">
+      <text class="location-icon">📍</text>
+      <text class="location-text">{{currentLocation}}</text>
+      <text class="location-arrow">›</text>
+    </view>
+    <view class="nav-actions">
+      <text class="search-btn" bindtap="onSearch">🔍</text>
+      <text class="message-btn" bindtap="onMessage">📩</text>
+    </view>
+  </view>
+
+  <!-- 分类Tab -->
+  <view class="category-tabs">
+    <view
+      class="tab-item {{currentTab === index ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="index"
+      data-index="{{index}}"
+      bindtap="switchTab"
+    >
+      {{item.name}}
+      <view class="tab-indicator" wx:if="{{currentTab === index}}"></view>
+    </view>
+  </view>
+
+  <!-- 笔记列表 - 瀑布流 -->
+  <view class="notes-container">
+    <view class="notes-column">
+      <view
+        class="note-card"
+        wx:for="{{leftNotes}}"
+        wx:for-item="note"
+        wx:key="id"
+        bindtap="onNoteTap"
+        data-note="{{note}}"
+      >
+        <!-- 封面图 -->
+        <view class="note-cover" style="background-image: url({{note.coverImage}})">
+          <view class="note-type-badge {{note.type === 'experience' ? 'experience' : 'partner'}}">
+            {{note.type === 'experience' ? '🐱❄️ 体验' : '🐱👥 搭子'}}
+          </view>
+        </view>
+
+        <!-- 标题 -->
+        <view class="note-title">{{note.title}}</view>
+
+        <!-- 作者信息 -->
+        <view class="note-author">
+          <image class="author-avatar" src="{{note.author.avatar}}" />
+          <view class="author-info">
+            <text class="author-name">{{note.author.nickname}}</text>
+            <view class="author-tags">
+              <text class="author-tag" wx:for="{{note.author.displayTags}}" wx:for-item="tag" wx:key="*this">
+                {{tag}}
+              </text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 互动信息 -->
+        <view class="note-stats">
+          <view class="stat-item" wx:if="{{note.type === 'experience'}}">
+            <text>❤️ {{note.likes}}</text>
+          </view>
+          <view class="stat-item" wx:if="{{note.type === 'experience'}}">
+            <text>💬 {{note.comments}}</text>
+          </view>
+          <view class="stat-item partner-info" wx:if="{{note.type === 'partner' && note.partnerInfo}}">
+            <text>👥 {{note.partnerInfo.currentJoiners}}/{{note.partnerInfo.maxJoiners}}人</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="notes-column">
+      <view
+        class="note-card"
+        wx:for="{{rightNotes}}"
+        wx:for-item="note"
+        wx:key="id"
+        bindtap="onNoteTap"
+        data-note="{{note}}"
+      >
+        <!-- 封面图 -->
+        <view class="note-cover" style="background-image: url({{note.coverImage}})">
+          <view class="note-type-badge {{note.type === 'experience' ? 'experience' : 'partner'}}">
+            {{note.type === 'experience' ? '🐱❄️ 体验' : '🐱👥 搭子'}}
+          </view>
+        </view>
+
+        <!-- 标题 -->
+        <view class="note-title">{{note.title}}</view>
+
+        <!-- 作者信息 -->
+        <view class="note-author">
+          <image class="author-avatar" src="{{note.author.avatar}}" />
+          <view class="author-info">
+            <text class="author-name">{{note.author.nickname}}</text>
+            <view class="author-tags">
+              <text class="author-tag" wx:for="{{note.author.displayTags}}" wx:for-item="tag" wx:key="*this">
+                {{tag}}
+              </text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 互动信息 -->
+        <view class="note-stats">
+          <view class="stat-item" wx:if="{{note.type === 'experience'}}">
+            <text>❤️ {{note.likes}}</text>
+          </view>
+          <view class="stat-item" wx:if="{{note.type === 'experience'}}">
+            <text>💬 {{note.comments}}</text>
+          </view>
+          <view class="stat-item partner-info" wx:if="{{note.type === 'partner' && note.partnerInfo}}">
+            <text>👥 {{note.partnerInfo.currentJoiners}}/{{note.partnerInfo.maxJoiners}}人</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{filteredNotes.length === 0}}">
+    <text class="empty-icon">🐱⛷️</text>
+    <text class="empty-text">还没有笔记哦～</text>
+    <text class="empty-hint">快来发布第一条笔记吧！</text>
+  </view>
+
+  <!-- 发布按钮 -->
+  <view class="publish-btn" bindtap="onPublish">
+    <text class="publish-icon">✏️🐱</text>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+</view>

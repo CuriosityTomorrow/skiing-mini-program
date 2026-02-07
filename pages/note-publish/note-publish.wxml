@@ -1,0 +1,159 @@
+<!--pages/note-publish/note-publish.wxml-->
+<view class="publish-page">
+  <!-- 顶部导航 -->
+  <view class="nav-bar">
+    <text class="cancel-btn" bindtap="onCancel">取消</text>
+    <text class="nav-title">发布笔记</text>
+    <text class="draft-btn" bindtap="showDrafts">✎ 草稿箱</text>
+  </view>
+
+  <!-- 选择类型 -->
+  <view class="type-selector">
+    <view class="selector-title">请选择发布类型</view>
+    <view class="type-cards">
+      <view
+        class="type-card {{noteType === 'experience' ? 'active' : ''}}"
+        bindtap="selectType"
+        data-type="experience"
+      >
+        <text class="type-icon">🐱❄️</text>
+        <text class="type-name">体验分享</text>
+      </view>
+      <view
+        class="type-card {{noteType === 'partner' ? 'active' : ''}}"
+        bindtap="selectType"
+        data-type="partner"
+      >
+        <text class="type-icon">🐱👥</text>
+        <text class="type-name">找搭子</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 上传图片 -->
+  <view class="upload-section">
+    <view class="section-title">上传图片/视频</view>
+    <view class="image-grid">
+      <view class="image-item" wx:for="{{images}}" wx:key="index">
+        <image class="uploaded-image" src="{{item}}" mode="aspectFill" />
+        <text class="remove-btn" bindtap="removeImage" data-index="{{index}}">×</text>
+      </view>
+      <view class="upload-btn" wx:if="{{images.length < 9}}" bindtap="chooseImage">
+        <text class="upload-icon">+</text>
+        <text class="upload-text">{{images.length === 0 ? '上传图片/视频' : ''}}</text>
+      </view>
+    </view>
+    <view class="upload-tip">最多上传9张图片，第一张为封面</view>
+  </view>
+
+  <!-- 标题 -->
+  <view class="input-section">
+    <view class="input-label">标题（必填）</view>
+    <input
+      class="title-input"
+      placeholder="填写标题，更容易被发现哦～"
+      value="{{title}}"
+      bindinput="onTitleInput"
+      maxlength="30"
+    />
+    <view class="char-count">{{title.length}}/30</view>
+  </view>
+
+  <!-- 正文 -->
+  <view class="input-section">
+    <view class="input-label">添加正文描述</view>
+    <textarea
+      class="content-textarea"
+      placeholder="分享你的滑雪体验、路线攻略、装备心得..."
+      value="{{content}}"
+      bindinput="onContentInput"
+      maxlength="1000"
+      auto-height
+    />
+    <view class="char-count">{{content.length}}/1000</view>
+  </view>
+
+  <!-- 关联滑雪场 -->
+  <view class="resort-selector" bindtap="selectResort">
+    <view class="selector-label">
+      <text>📍 关联滑雪场（可选）</text>
+    </view>
+    <view class="selector-value">
+      <text wx:if="{{!selectedResort}}">点击搜索滑雪场名称</text>
+      <text wx:else class="selected-resort">{{selectedResort.name}}</text>
+    </view>
+    <text class="selector-arrow">›</text>
+  </view>
+
+  <!-- 添加标签 -->
+  <view class="tags-section">
+    <view class="section-title">🏷️ 添加标签</view>
+    <view class="tags-input">
+      <input
+        class="tag-input-field"
+        placeholder="输入标签后按回车"
+        value="{{tagInput}}"
+        bindinput="onTagInput"
+        bindconfirm="addTag"
+      />
+      <text class="add-tag-btn" bindtap="addTag">添加</text>
+    </view>
+    <view class="tags-list">
+      <view class="tag-item" wx:for="{{tags}}" wx:key="*this">
+        #{{item}}
+        <text class="tag-remove" bindtap="removeTag" data-tag="{{item}}">×</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 找搭子专属信息 -->
+  <view class="partner-section" wx:if="{{noteType === 'partner'}}">
+    <view class="section-divider">
+      <text>──────────── 找搭子专属 ────────────</text>
+    </view>
+
+    <view class="partner-field">
+      <text class="field-label">📅 计划日期</text>
+      <picker mode="date" value="{{partnerInfo.plannedDate}}" bindchange="onDateChange">
+        <view class="field-value">
+          {{partnerInfo.plannedDate || '选择日期 >'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="partner-field">
+      <text class="field-label">👥 人数限制</text>
+      <picker
+        mode="selector"
+        range="{{personCountOptions}}"
+        bindchange="onPersonCountChange"
+      >
+        <view class="field-value">
+          {{partnerInfo.maxJoiners || 4}} 人 >
+        </view>
+      </picker>
+    </view>
+
+    <view class="partner-tags-section">
+      <text class="field-label">🏷️ 行程标签</text>
+      <view class="partner-tags">
+        <view
+          class="partner-tag-option {{partnerInfo.tags.includes(item) ? 'active' : ''}}"
+          wx:for="{{partnerTagOptions}}"
+          wx:key="*this"
+          bindtap="togglePartnerTag"
+          data-tag="{{item}}"
+        >
+          #{{item}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发布按钮 -->
+  <view class="publish-btn-container">
+    <button class="publish-btn" bindtap="onPublish" disabled="{{!canPublish}}">
+      发布
+    </button>
+  </view>
+</view>

@@ -1,0 +1,266 @@
+<!--pages/resort/resort.wxml-->
+<view class="container">
+  <!-- 轮播图 -->
+  <swiper class="resort-swiper" indicator-dots autoplay circular>
+    <block wx:for="{{resort.images}}" wx:key="*this">
+      <swiper-item>
+        <image class="swiper-image" src="{{item}}" mode="aspectFill" bindtap="onPreviewImage" data-url="{{item}}" data-urls="{{resort.images}}"></image>
+      </swiper-item>
+    </block>
+  </swiper>
+
+  <!-- 基本信息 -->
+  <view class="info-card">
+    <view class="resort-header">
+      <view class="resort-title-row">
+        <text class="resort-name">{{resort.name}}</text>
+        <view class="resort-type {{resort.type === 'indoor' ? 'indoor' : 'outdoor'}}">
+          {{resort.type === 'indoor' ? '室内' : '室外'}}
+        </view>
+      </view>
+      <text class="resort-name-en">{{resort.nameEn}}</text>
+    </view>
+
+    <view class="resort-meta">
+      <view class="meta-item">
+        <image class="meta-icon" src="/images/star.png"></image>
+        <text class="meta-value">{{resort.rating}}</text>
+        <text class="meta-label">({{resort.reviewCount}}条评价)</text>
+      </view>
+      <view class="meta-item">
+        <image class="meta-icon" src="/images/location.png"></image>
+        <text class="meta-value">{{resort.city}}, {{resort.country}}</text>
+      </view>
+    </view>
+
+    <view class="resort-tags">
+      <block wx:for="{{resort.features}}" wx:key="*this" wx:for-item="feature">
+        <text class="feature-tag">{{feature}}</text>
+      </block>
+    </view>
+  </view>
+
+  <!-- 价格和预订 -->
+  <view class="price-card">
+    <view class="price-left">
+      <text class="price-label">参考价</text>
+      <view class="price-row">
+        <text class="price-value">¥{{resort.price}}</text>
+        <text class="price-unit">/{{resort.priceUnit}}</text>
+      </view>
+    </view>
+    <button class="btn-book" open-type="contact">咨询预订</button>
+  </view>
+
+  <!-- 滑雪场信息 -->
+  <view class="detail-card">
+    <view class="card-title">滑雪场信息</view>
+
+    <view class="detail-grid">
+      <view class="grid-item">
+        <text class="grid-label">海拔</text>
+        <text class="grid-value">{{resort.elevation}}m</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-label">雪道数</text>
+        <text class="grid-value">{{resort.trails}}条</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-label">雪季</text>
+        <text class="grid-value">{{resort.season}}</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-label">类型</text>
+        <text class="grid-value">{{resort.type === 'indoor' ? '室内' : '室外'}}</text>
+      </view>
+    </view>
+
+    <view class="trail-distribution">
+      <text class="section-title">雪道分布</text>
+      <view class="trail-bars">
+        <view class="trail-bar-item">
+          <view class="trail-bar-header">
+            <text class="trail-label">初级</text>
+            <text class="trail-percent">{{resort.trailsDistribution.初级}}</text>
+          </view>
+          <view class="trail-bar-bg">
+            <view class="trail-bar-fill beginner" style="width: {{resort.trailsDistribution.初级}}"></view>
+          </view>
+        </view>
+        <view class="trail-bar-item">
+          <view class="trail-bar-header">
+            <text class="trail-label">中级</text>
+            <text class="trail-percent">{{resort.trailsDistribution.中级}}</text>
+          </view>
+          <view class="trail-bar-bg">
+            <view class="trail-bar-fill intermediate" style="width: {{resort.trailsDistribution.中级}}"></view>
+          </view>
+        </view>
+        <view class="trail-bar-item">
+          <view class="trail-bar-header">
+            <text class="trail-label">高级</text>
+            <text class="trail-percent">{{resort.trailsDistribution.高级}}</text>
+          </view>
+          <view class="trail-bar-bg">
+            <view class="trail-bar-fill advanced" style="width: {{resort.trailsDistribution.高级}}"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 交通方式 -->
+  <view class="detail-card">
+    <view class="card-title">交通方式</view>
+    <view class="transport-list">
+      <block wx:for="{{resort.transportation}}" wx:key="type" wx:for-item="trans">
+        <view class="transport-item">
+          <view class="transport-icon-wrapper {{trans.type === '高铁' ? 'train' : trans.type === '飞机' ? 'plane' : 'car'}}">
+            <image class="transport-icon" src="/images/{{trans.type === '高铁' ? 'train' : trans.type === '飞机' ? 'plane' : 'car'}}.png"></image>
+          </view>
+          <view class="transport-info">
+            <text class="transport-type">{{trans.type}}</text>
+            <text class="transport-route">{{trans.from}} → {{trans.detail}}</text>
+            <text class="transport-duration">预计 {{trans.duration}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 设施服务 -->
+  <view class="detail-card">
+    <view class="card-title">设施服务</view>
+    <view class="facilities-grid">
+      <block wx:for="{{resort.facilities}}" wx:key="*this" wx:for-item="facility">
+        <view class="facility-item">
+          <image class="facility-icon" src="/images/facility-{{facility}}.png"></image>
+          <text class="facility-name">{{facility}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 滑雪场介绍 -->
+  <view class="detail-card">
+    <view class="card-title">滑雪场介绍</view>
+    <text class="description">{{resort.description}}</text>
+  </view>
+
+  <!-- 📝 相关笔记 -->
+  <view class="notes-section">
+    <view class="section-header" bindtap="onViewAllNotes">
+      <text class="section-title">📝 相关笔记</text>
+      <text class="view-all">查看全部 ({{relatedNotes.length}}) ›</text>
+    </view>
+
+    <scroll-view class="notes-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view
+        class="note-mini-card"
+        wx:for="{{relatedNotes}}"
+        wx:key="id"
+        bindtap="onNoteTap"
+        data-note="{{item}}"
+      >
+        <view class="note-mini-cover" style="background-image: url({{item.coverImage}})">
+          <view class="note-mini-type {{item.type === 'experience' ? 'experience' : 'partner'}}">
+            {{item.type === 'experience' ? '🐱❄️' : '🐱👥'}}
+          </view>
+        </view>
+        <view class="note-mini-title">{{item.title}}</view>
+        <view class="note-mini-stats">
+          <text wx:if="{{item.type === 'experience'}}">❤️ {{item.likes}}</text>
+          <text wx:if="{{item.type === 'partner'}}">👥 {{item.partnerInfo.currentJoiners}}/{{item.partnerInfo.maxJoiners}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 用户评价 -->
+  <view class="reviews-card">
+    <view class="card-title">
+      <text>用户评价</text>
+      <text class="review-count">({{resort.reviewCount}})</text>
+      <button class="btn-write-review" bindtap="onWriteReview">写评价</button>
+    </view>
+
+    <block wx:for="{{reviews}}" wx:key="id">
+      <view class="review-item">
+        <view class="review-user">
+          <image class="review-avatar" src="{{item.user.avatar}}" mode="aspectFill"></image>
+          <view class="review-user-info">
+            <text class="review-nickname">{{item.user.nickname}}</text>
+            <view class="review-user-tags">
+              <text class="user-tag">{{item.user.skiType}}</text>
+              <text class="user-tag">{{item.user.level}}</text>
+            </view>
+          </view>
+          <view class="review-rating">
+            <image class="star-small" src="/images/star.png"></image>
+            <text>{{item.rating}}</text>
+          </view>
+        </view>
+
+        <text class="review-content">{{item.content}}</text>
+
+        <view wx:if="{{item.images && item.images.length > 0}}" class="review-images">
+          <block wx:for="{{item.images}}" wx:key="*this" wx:for-item="img" wx:for-index="imgIdx">
+            <image class="review-image" src="{{img}}" mode="aspectFill" bindtap="onPreviewImage" data-url="{{img}}" data-urls="{{item.images}}"></image>
+          </block>
+        </view>
+
+        <view class="review-footer">
+          <text class="review-date">{{item.date}}</text>
+          <view class="review-actions">
+            <view class="action-item">
+              <image class="action-icon" src="/images/like.png"></image>
+              <text>{{item.likes}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="view-more" bindtap="onViewAllReviews">
+      <text>查看全部评价</text>
+      <image class="arrow-right" src="/images/arrow-right.png"></image>
+    </view>
+
+    <!-- 找搭子入口 -->
+    <view class="find-partner-section">
+      <view class="find-partner-header">
+        <text class="find-partner-title">🤝 找滑雪搭子</text>
+        <text class="find-partner-subtitle">查看谁也要去这里滑雪</text>
+      </view>
+      <scroll-view class="partners-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <block wx:for="{{resortPartners}}" wx:key="id" wx:for-item="partner">
+          <view class="partner-mini-card" bindtap="onViewPartner" data-partner="{{partner}}">
+            <image class="partner-mini-avatar" src="{{partner.user.avatar}}" mode="aspectFill"></image>
+            <text class="partner-mini-name">{{partner.user.nickname}}</text>
+            <text class="partner-mini-date">{{partner.plannedDate}}</text>
+          </view>
+        </block>
+        <view class="partner-mini-card add-partner" bindtap="onPostPartner">
+          <text class="add-icon">+</text>
+          <text class="add-text">发布行程</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <button class="bar-btn btn-collect" bindtap="onCollect">
+      <image class="bar-icon" src="{{isCollected ? '/images/heart-filled.png' : '/images/heart.png'}}"></image>
+      收藏
+    </button>
+    <button class="bar-btn btn-compare" bindtap="onAddToCompare">
+      <image class="bar-icon" src="/images/compare.png"></image>
+      {{isSelected ? '已添加' : '加入对比'}}
+    </button>
+    <button class="bar-btn btn-share-main" open-type="share">
+      <image class="bar-icon" src="/images/share.png"></image>
+      分享
+    </button>
+  </view>
+</view>

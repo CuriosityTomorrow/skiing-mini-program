@@ -1,0 +1,357 @@
+/* pages/note-publish/note-publish.wxss */
+
+page {
+  background-color: #FAFBFD;
+  padding-bottom: 120rpx;
+}
+
+/* ========== 顶部导航 ========== */
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E8F4FD;
+}
+
+.cancel-btn {
+  font-size: 28rpx;
+  color: #7F8C8D;
+}
+
+.nav-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #2C3E50;
+}
+
+.draft-btn {
+  font-size: 28rpx;
+  color: #5B9BD5;
+}
+
+/* ========== 类型选择 ========== */
+.type-selector {
+  background: #FFFFFF;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.selector-title {
+  font-size: 28rpx;
+  color: #7F8C8D;
+  margin-bottom: 20rpx;
+}
+
+.type-cards {
+  display: flex;
+  gap: 20rpx;
+}
+
+.type-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+  padding: 40rpx 20rpx;
+  background: #F7F9FA;
+  border: 2rpx solid #E1E8ED;
+  border-radius: 16rpx;
+  transition: all 0.3s;
+}
+
+.type-card.active {
+  background: linear-gradient(135deg, #E8F4FD 0%, #D4ECF9 100%);
+  border-color: #5B9BD5;
+}
+
+.type-icon {
+  font-size: 64rpx;
+}
+
+.type-name {
+  font-size: 28rpx;
+  color: #2C3E50;
+  font-weight: 500;
+}
+
+/* ========== 上传图片 ========== */
+.upload-section {
+  background: #FFFFFF;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  color: #2C3E50;
+  margin-bottom: 20rpx;
+}
+
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.image-item {
+  position: relative;
+  width: 216rpx;
+  height: 216rpx;
+}
+
+.uploaded-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 12rpx;
+}
+
+.remove-btn {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  width: 48rpx;
+  height: 48rpx;
+  background: rgba(0, 0, 0, 0.6);
+  color: #FFFFFF;
+  font-size: 36rpx;
+  line-height: 48rpx;
+  text-align: center;
+  border-radius: 50%;
+}
+
+.upload-btn {
+  width: 216rpx;
+  height: 216rpx;
+  background: #F7F9FA;
+  border: 2rpx dashed #E1E8ED;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+}
+
+.upload-icon {
+  font-size: 64rpx;
+  color: #95A5A6;
+}
+
+.upload-text {
+  font-size: 24rpx;
+  color: #95A5A6;
+}
+
+.upload-tip {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: #95A5A6;
+}
+
+/* ========== 输入区域 ========== */
+.input-section {
+  background: #FFFFFF;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+  position: relative;
+}
+
+.input-label {
+  font-size: 28rpx;
+  color: #2C3E50;
+  margin-bottom: 16rpx;
+}
+
+.title-input {
+  width: 100%;
+  font-size: 30rpx;
+  padding: 20rpx 0;
+  border-bottom: 1px solid #E1E8ED;
+}
+
+.content-textarea {
+  width: 100%;
+  min-height: 200rpx;
+  font-size: 28rpx;
+  line-height: 1.8;
+  padding: 20rpx 0;
+}
+
+.char-count {
+  position: absolute;
+  bottom: 20rpx;
+  right: 32rpx;
+  font-size: 22rpx;
+  color: #95A5A6;
+}
+
+/* ========== 滑雪场选择 ========== */
+.resort-selector {
+  background: #FFFFFF;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.selector-label {
+  font-size: 28rpx;
+  color: #2C3E50;
+}
+
+.selector-value {
+  flex: 1;
+  font-size: 28rpx;
+  color: #95A5A6;
+}
+
+.selected-resort {
+  color: #4A90E2;
+  font-weight: 500;
+}
+
+.selector-arrow {
+  font-size: 32rpx;
+  color: #95A5A6;
+}
+
+/* ========== 标签 ========== */
+.tags-section {
+  background: #FFFFFF;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.tags-input {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.tag-input-field {
+  flex: 1;
+  padding: 16rpx 20rpx;
+  background: #F7F9FA;
+  border: 1px solid #E1E8ED;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+}
+
+.add-tag-btn {
+  padding: 16rpx 32rpx;
+  background: #5B9BD5;
+  color: #FFFFFF;
+  font-size: 26rpx;
+  border-radius: 12rpx;
+}
+
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.tag-item {
+  padding: 8rpx 20rpx;
+  background: #E8F4FD;
+  color: #5B9BD5;
+  font-size: 24rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.tag-remove {
+  font-size: 32rpx;
+  color: #4A90E2;
+  font-weight: bold;
+}
+
+/* ========== 找搭子专属 ========== */
+.partner-section {
+  background: #FFFFFF;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.section-divider {
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+
+.section-divider text {
+  font-size: 24rpx;
+  color: #95A5A6;
+}
+
+.partner-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1px solid #E1E8ED;
+}
+
+.field-label {
+  font-size: 28rpx;
+  color: #2C3E50;
+}
+
+.field-value {
+  font-size: 28rpx;
+  color: #4A90E2;
+}
+
+.partner-tags-section {
+  padding: 24rpx 0;
+}
+
+.partner-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.partner-tag-option {
+  padding: 12rpx 24rpx;
+  background: #F7F9FA;
+  color: #7F8C8D;
+  font-size: 24rpx;
+  border-radius: 24rpx;
+  border: 1px solid #E1E8ED;
+}
+
+.partner-tag-option.active {
+  background: #E8F4FD;
+  color: #4ECDC4;
+  border-color: #4ECDC4;
+}
+
+/* ========== 发布按钮 ========== */
+.publish-btn-container {
+  padding: 32rpx;
+}
+
+.publish-btn {
+  width: 100%;
+  padding: 28rpx;
+  background: linear-gradient(135deg, #FF8B5A 0%, #FF6B35 100%);
+  color: #FFFFFF;
+  font-size: 32rpx;
+  font-weight: 500;
+  border: none;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 53, 0.3);
+}
+
+.publish-btn[disabled] {
+  background: #E1E8ED;
+  color: #95A5A6;
+  box-shadow: none;
+}

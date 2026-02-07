@@ -1,0 +1,335 @@
+/* pages/compare/compare.wxss */
+.container {
+  min-height: 100vh;
+  background: #F5F5F5;
+  padding-bottom: 40rpx;
+}
+
+/* 顶部操作栏 */
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx;
+  background: white;
+}
+
+.selected-count {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 16rpx;
+}
+
+.btn-share, .btn-clear {
+  padding: 16rpx 32rpx;
+  border-radius: 48rpx;
+  font-size: 26rpx;
+  border: none;
+}
+
+.btn-share {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+  color: white;
+}
+
+.btn-icon {
+  width: 28rpx;
+  height: 28rpx;
+  margin-right: 8rpx;
+}
+
+.btn-clear {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+/* 对比列表 */
+.compare-list {
+  display: flex;
+  white-space: nowrap;
+  padding: 24rpx;
+  height: calc(100vh - 200rpx);
+}
+
+.compare-card {
+  display: inline-block;
+  width: 560rpx;
+  background: white;
+  border-radius: 24rpx;
+  margin-right: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  vertical-align: top;
+  position: relative;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+  width: 56rpx;
+  height: 56rpx;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  backdrop-filter: blur(10rpx);
+}
+
+.remove-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.resort-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 360rpx;
+}
+
+.resort-image {
+  width: 100%;
+  height: 100%;
+}
+
+.resort-type-badge {
+  position: absolute;
+  top: 24rpx;
+  left: 24rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 24rpx;
+  font-size: 24rpx;
+  color: white;
+  font-weight: 500;
+}
+
+.resort-type-badge.indoor {
+  background: rgba(33, 150, 243, 0.9);
+}
+
+.resort-type-badge.outdoor {
+  background: rgba(76, 175, 80, 0.9);
+}
+
+.resort-name {
+  padding: 32rpx 24rpx 16rpx;
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  white-space: normal;
+}
+
+.compare-info {
+  padding: 0 24rpx 24rpx;
+}
+
+.info-item {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  display: block;
+  font-size: 24rpx;
+  color: #9E9E9E;
+  margin-bottom: 12rpx;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.rating-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.star-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 8rpx;
+}
+
+.rating-value {
+  font-size: 32rpx;
+  color: #FF9800;
+  font-weight: 500;
+  margin-right: 8rpx;
+}
+
+.review-count {
+  font-size: 24rpx;
+  color: #9E9E9E;
+}
+
+.price-wrapper {
+  display: flex;
+  align-items: baseline;
+}
+
+.price-value {
+  font-size: 40rpx;
+  color: #F44336;
+  font-weight: bold;
+  margin-right: 4rpx;
+}
+
+.price-unit {
+  font-size: 24rpx;
+  color: #9E9E9E;
+}
+
+.trails-distribution {
+  display: flex;
+  gap: 16rpx;
+}
+
+.trail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx;
+  background: #F5F5F5;
+  border-radius: 12rpx;
+  flex: 1;
+}
+
+.trail-label {
+  font-size: 22rpx;
+  color: #757575;
+  margin-bottom: 8rpx;
+}
+
+.trail-percent {
+  font-size: 28rpx;
+  color: #1E88E5;
+  font-weight: 500;
+}
+
+.transport-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.transport-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx;
+  background: #F5F5F5;
+  border-radius: 12rpx;
+}
+
+.transport-type {
+  font-size: 26rpx;
+  color: #1E88E5;
+  font-weight: 500;
+}
+
+.transport-time {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.facilities-list, .features-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.facility-tag, .feature-tag {
+  padding: 8rpx 20rpx;
+  background: #E3F2FD;
+  border-radius: 24rpx;
+  font-size: 24rpx;
+  color: #1976D2;
+}
+
+.feature-tag {
+  background: #FFF3E0;
+  color: #F57C00;
+}
+
+/* 卡片操作按钮 */
+.card-actions {
+  display: flex;
+  gap: 16rpx;
+  padding: 0 24rpx 24rpx;
+}
+
+.btn-detail, .btn-book {
+  flex: 1;
+  padding: 24rpx;
+  border-radius: 48rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+.btn-detail {
+  background: #F5F5F5;
+  color: #333;
+}
+
+.btn-book {
+  background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+  color: white;
+  font-weight: 500;
+}
+
+/* 底部提示 */
+.footer-tip {
+  text-align: center;
+  padding: 32rpx;
+}
+
+.footer-tip text {
+  font-size: 26rpx;
+  color: #9E9E9E;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 40rpx;
+}
+
+.empty-icon {
+  width: 240rpx;
+  height: 240rpx;
+  margin-bottom: 40rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #757575;
+  margin-bottom: 48rpx;
+}
+
+.btn-go-search {
+  padding: 28rpx 64rpx;
+  background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+  color: white;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  border: none;
+  font-weight: 500;
+}

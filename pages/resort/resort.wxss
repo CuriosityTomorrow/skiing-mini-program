@@ -1,0 +1,716 @@
+/* pages/resort/resort.wxss */
+.container {
+  min-height: 100vh;
+  background: #F5F5F5;
+  padding-bottom: 120rpx;
+}
+
+/* 轮播图 */
+.resort-swiper {
+  width: 100%;
+  height: 500rpx;
+}
+
+.swiper-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* 卡片通用 */
+.info-card, .price-card, .detail-card, .reviews-card {
+  background: white;
+  margin: 24rpx;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 滑雪场头部 */
+.resort-header {
+  margin-bottom: 24rpx;
+}
+
+.resort-title-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.resort-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  margin-right: 16rpx;
+}
+
+.resort-type {
+  padding: 8rpx 20rpx;
+  border-radius: 24rpx;
+  font-size: 24rpx;
+  color: white;
+  font-weight: 500;
+}
+
+.resort-type.indoor {
+  background: #2196F3;
+}
+
+.resort-type.outdoor {
+  background: #4CAF50;
+}
+
+.resort-name-en {
+  font-size: 26rpx;
+  color: #9E9E9E;
+}
+
+/* 滑雪场元信息 */
+.resort-meta {
+  display: flex;
+  gap: 32rpx;
+  margin-bottom: 24rpx;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+}
+
+.meta-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 8rpx;
+}
+
+.meta-value {
+  font-size: 28rpx;
+  color: #333;
+  margin-right: 4rpx;
+}
+
+.meta-label {
+  font-size: 24rpx;
+  color: #9E9E9E;
+}
+
+/* 滑雪场标签 */
+.resort-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.feature-tag {
+  padding: 8rpx 20rpx;
+  background: #FFF3E0;
+  border-radius: 24rpx;
+  font-size: 24rpx;
+  color: #F57C00;
+}
+
+/* 价格卡片 */
+.price-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.price-label {
+  font-size: 24rpx;
+  color: #9E9E9E;
+  margin-bottom: 8rpx;
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+}
+
+.price-value {
+  font-size: 44rpx;
+  color: #F44336;
+  font-weight: bold;
+}
+
+.price-unit {
+  font-size: 24rpx;
+  color: #9E9E9E;
+  margin-left: 4rpx;
+}
+
+.btn-book {
+  padding: 24rpx 48rpx;
+  background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+  color: white;
+  border-radius: 48rpx;
+  font-size: 28rpx;
+  border: none;
+  font-weight: 500;
+}
+
+/* 详情卡片 */
+.card-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+/* 信息网格 */
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.grid-item {
+  display: flex;
+  flex-direction: column;
+  padding: 20rpx;
+  background: #F5F5F5;
+  border-radius: 12rpx;
+}
+
+.grid-label {
+  font-size: 24rpx;
+  color: #9E9E9E;
+  margin-bottom: 8rpx;
+}
+
+.grid-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+/* 雪道分布 */
+.trail-distribution {
+  margin-top: 32rpx;
+}
+
+.section-title {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.trail-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.trail-bar-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.trail-bar-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.trail-label {
+  font-size: 26rpx;
+  color: #333;
+}
+
+.trail-percent {
+  font-size: 26rpx;
+  color: #1E88E5;
+  font-weight: 500;
+}
+
+.trail-bar-bg {
+  height: 16rpx;
+  background: #E0E0E0;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.trail-bar-fill {
+  height: 100%;
+  border-radius: 8rpx;
+  transition: width 0.3s;
+}
+
+.trail-bar-fill.beginner {
+  background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%);
+}
+
+.trail-bar-fill.intermediate {
+  background: linear-gradient(90deg, #2196F3 0%, #42A5F5 100%);
+}
+
+.trail-bar-fill.advanced {
+  background: linear-gradient(90deg, #F44336 0%, #EF5350 100%);
+}
+
+/* 交通列表 */
+.transport-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.transport-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #F5F5F5;
+  border-radius: 12rpx;
+}
+
+.transport-icon-wrapper {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+}
+
+.transport-icon-wrapper.train {
+  background: #E3F2FD;
+}
+
+.transport-icon-wrapper.plane {
+  background: #FCE4EC;
+}
+
+.transport-icon-wrapper.car {
+  background: #FFF3E0;
+}
+
+.transport-icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.transport-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.transport-type {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 8rpx;
+}
+
+.transport-route {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 6rpx;
+}
+
+.transport-duration {
+  font-size: 24rpx;
+  color: #1E88E5;
+}
+
+/* 设施网格 */
+.facilities-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20rpx;
+}
+
+.facility-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx;
+}
+
+.facility-icon {
+  width: 56rpx;
+  height: 56rpx;
+  margin-bottom: 12rpx;
+}
+
+.facility-name {
+  font-size: 22rpx;
+  color: #666;
+  text-align: center;
+}
+
+/* 介绍 */
+.description {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.8;
+}
+
+/* 评价卡片 */
+.reviews-card {
+  padding-bottom: 24rpx;
+}
+
+.reviews-card .card-title {
+  display: flex;
+  align-items: center;
+}
+
+.review-count {
+  font-size: 26rpx;
+  color: #9E9E9E;
+  margin-left: 8rpx;
+  font-weight: normal;
+}
+
+.review-item {
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.review-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.review-user {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.review-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  margin-right: 16rpx;
+}
+
+.review-user-info {
+  flex: 1;
+}
+
+.review-nickname {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.review-user-tags {
+  display: flex;
+  gap: 8rpx;
+}
+
+.user-tag {
+  padding: 4rpx 12rpx;
+  background: #F5F5F5;
+  border-radius: 16rpx;
+  font-size: 20rpx;
+  color: #666;
+}
+
+.review-rating {
+  display: flex;
+  align-items: center;
+}
+
+.star-small {
+  width: 28rpx;
+  height: 28rpx;
+  margin-right: 6rpx;
+}
+
+.review-rating text {
+  font-size: 26rpx;
+  color: #FF9800;
+}
+
+.review-content {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 16rpx;
+}
+
+.review-images {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.review-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+}
+
+.review-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.review-date {
+  font-size: 24rpx;
+  color: #9E9E9E;
+}
+
+.review-actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 24rpx;
+  color: #757575;
+}
+
+.action-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.view-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 0;
+  margin-top: 8rpx;
+}
+
+.view-more text {
+  font-size: 28rpx;
+  color: #1E88E5;
+  margin-right: 8rpx;
+}
+
+.arrow-right {
+  width: 24rpx;
+  height: 24rpx;
+}
+
+/* 找搭子入口 */
+.find-partner-section {
+  margin-top: 24rpx;
+  padding-top: 24rpx;
+  border-top: 1rpx solid #F5F5F5;
+}
+
+.find-partner-header {
+  margin-bottom: 20rpx;
+}
+
+.find-partner-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.find-partner-subtitle {
+  display: block;
+  font-size: 24rpx;
+  color: #9E9E9E;
+}
+
+.partners-scroll {
+  white-space: nowrap;
+}
+
+.partner-mini-card {
+  display: inline-block;
+  width: 160rpx;
+  text-align: center;
+  padding: 20rpx;
+  background: #F5F5F5;
+  border-radius: 12rpx;
+  margin-right: 16rpx;
+  vertical-align: top;
+}
+
+.partner-mini-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  margin-bottom: 12rpx;
+}
+
+.partner-mini-name {
+  display: block;
+  font-size: 26rpx;
+  color: #333;
+  margin-bottom: 6rpx;
+  white-space: normal;
+}
+
+.partner-mini-date {
+  display: block;
+  font-size: 22rpx;
+  color: #9E9E9E;
+}
+
+.partner-mini-card.add-partner {
+  background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-icon {
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.add-text {
+  font-size: 24rpx;
+}
+
+.btn-write-review {
+  padding: 12rpx 24rpx;
+  background: #1E88E5;
+  color: white;
+  border-radius: 24rpx;
+  font-size: 24rpx;
+  border: none;
+  margin-left: auto;
+}
+
+/* 底部操作栏 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: white;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+.bar-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16rpx;
+  background: transparent;
+  border: none;
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+.bar-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-bottom: 8rpx;
+}
+
+/* ========== 相关笔记 ========== */
+.notes-section {
+  background: #FFFFFF;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.view-all {
+  font-size: 26rpx;
+  color: #5B9BD5;
+}
+
+.notes-scroll {
+  display: flex;
+  gap: 16rpx;
+  overflow-x: scroll;
+}
+
+.note-mini-card {
+  flex-shrink: 0;
+  width: 240rpx;
+  background: #F7F9FA;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(91, 155, 213, 0.08);
+}
+
+.note-mini-cover {
+  position: relative;
+  width: 100%;
+  height: 300rpx;
+  background-size: cover;
+  background-position: center;
+  background-color: #F0F4F8;
+}
+
+.note-mini-type {
+  position: absolute;
+  top: 12rpx;
+  left: 12rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 20rpx;
+  color: #FFFFFF;
+  backdrop-filter: blur(10rpx);
+}
+
+.note-mini-type.experience {
+  background: rgba(91, 155, 213, 0.9);
+}
+
+.note-mini-type.partner {
+  background: rgba(78, 205, 196, 0.9);
+}
+
+.note-mini-title {
+  padding: 16rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #2C3E50;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
+  height: 72rpx;
+}
+
+.note-mini-stats {
+  padding: 0 16rpx 16rpx;
+  font-size: 22rpx;
+  color: #7F8C8D;
+}
+
+.btn-compare {
+  color: #1E88E5;
+}
