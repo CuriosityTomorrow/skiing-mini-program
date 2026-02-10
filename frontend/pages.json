@@ -28,21 +28,15 @@
     "list": [
       {
         "pagePath": "src/pages/resort/list/index",
-        "text": "滑雪场",
-        "iconPath": "src/static/tab/resort.png",
-        "selectedIconPath": "src/static/tab/resort-active.png"
+        "text": "滑雪场"
       },
       {
         "pagePath": "src/pages/community/index",
-        "text": "社群",
-        "iconPath": "src/static/tab/community.png",
-        "selectedIconPath": "src/static/tab/community-active.png"
+        "text": "社群"
       },
       {
         "pagePath": "src/pages/profile/index",
-        "text": "我的",
-        "iconPath": "src/static/tab/profile.png",
-        "selectedIconPath": "src/static/tab/profile-active.png"
+        "text": "我的"
       }
     ]
   },
