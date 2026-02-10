@@ -10,8 +10,8 @@
  */
 
 export const AMAP_CONFIG = {
-  // 替换为你的高德API Key
-  apiKey: 'YOUR_AMAP_API_KEY_HERE',
+  // 高德Web服务API Key
+  apiKey: '41f98310392808752b5e9ea1e6bc4776',
 
   // 高德Web服务API域名
   webServiceDomain: 'https://restapi.amap.com'
