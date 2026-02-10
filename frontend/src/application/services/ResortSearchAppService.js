@@ -92,6 +92,7 @@ export class ResortSearchAppService {
 
   /**
    * 从高德API搜索
+   * 如果API调用失败，fallback到本地数据搜索
    */
   async _searchFromAmap(keyword, userLocation) {
     // 检查缓存
@@ -108,18 +109,53 @@ export class ResortSearchAppService {
       ? `${userLocation.longitude},${userLocation.latitude}`
       : ''
 
-    const results = await this.amapService.searchResorts({
-      keywords: keyword,
-      location: location,
-      offset: 50
-    })
+    try {
+      const results = await this.amapService.searchResorts({
+        keywords: keyword,
+        location: location,
+        offset: 50
+      })
 
-    // 缓存结果
-    if (results.length > 0) {
-      this._setCache(cacheKey, results)
+      // 如果高德API有结果，使用API结果
+      if (results.length > 0) {
+        console.log('[高德] API返回', results.length, '个结果')
+        this._setCache(cacheKey, results)
+        return results
+      }
+    } catch (error) {
+      console.warn('[高德] API调用失败，使用本地数据fallback:', error)
     }
 
-    return results
+    // Fallback: 高德API无结果或失败时，在本地TOP50数据中搜索
+    console.log('[Fallback] 在本地TOP50数据中搜索')
+    const localResults = this._searchInLocalData(keyword)
+
+    // 缓存本地搜索结果
+    if (localResults.length > 0) {
+      this._setCache(cacheKey, localResults)
+    }
+
+    return localResults
+  }
+
+  /**
+   * 在本地TOP50数据中搜索
+   */
+  _searchInLocalData(keyword) {
+    const allResorts = this._getMockPopularResorts()
+    const keywordLower = keyword.toLowerCase()
+
+    return allResorts.filter(resort => {
+      const name = (resort.name || '').toLowerCase()
+      const province = (resort.province || '').toLowerCase()
+      const city = (resort.city || '').toLowerCase()
+      const district = (resort.district || '').toLowerCase()
+
+      return name.includes(keywordLower) ||
+             province.includes(keywordLower) ||
+             city.includes(keywordLower) ||
+             district.includes(keywordLower)
+    })
   }
 
   /**
