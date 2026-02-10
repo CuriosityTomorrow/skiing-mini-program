@@ -1,11 +1,13 @@
+import { AMAP_CONFIG } from '../config/amap.config.js'
+
 /**
  * 高德地图 POI 搜索服务
  * 文档: https://lbs.amap.com/api/webservice/guide/api/search
  */
 export class AmapPoiService {
   constructor(apiKey) {
-    this.apiKey = apiKey || 'YOUR_AMAP_KEY' // TODO: 配置高德API Key
-    this.baseUrl = 'https://restapi.amap.com/v3'
+    this.apiKey = apiKey || AMAP_CONFIG.apiKey
+    this.baseUrl = AMAP_CONFIG.webServiceDomain + '/v3'
   }
 
   /**
