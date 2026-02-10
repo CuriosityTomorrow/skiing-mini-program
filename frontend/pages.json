@@ -6,8 +6,46 @@
         "navigationBarTitleText": "滑雪场",
         "enablePullDownRefresh": true
       }
+    },
+    {
+      "path": "src/pages/community/index",
+      "style": {
+        "navigationBarTitleText": "滑雪社群"
+      }
+    },
+    {
+      "path": "src/pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
     }
   ],
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#667eea",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "src/pages/resort/list/index",
+        "text": "滑雪场",
+        "iconPath": "src/static/tab/resort.png",
+        "selectedIconPath": "src/static/tab/resort-active.png"
+      },
+      {
+        "pagePath": "src/pages/community/index",
+        "text": "社群",
+        "iconPath": "src/static/tab/community.png",
+        "selectedIconPath": "src/static/tab/community-active.png"
+      },
+      {
+        "pagePath": "src/pages/profile/index",
+        "text": "我的",
+        "iconPath": "src/static/tab/profile.png",
+        "selectedIconPath": "src/static/tab/profile-active.png"
+      }
+    ]
+  },
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "滑雪小程序",
