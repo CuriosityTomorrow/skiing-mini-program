@@ -41,6 +41,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **AppID**：`wx26ec61e86b268268`
 - **环境ID**：`cloudbase-0g4g10cr89711adb`
 
+### 高德地图配置
+- **Web Service API Key**：`41f98310392808752b5e9ea1e6bc4776`
+- **配置文件**：`frontend/src/infrastructure/config/amap.config.js`
+- **合法域名**：已在微信小程序后台配置 `restapi.amap.com`
+
 ### 项目路径
 - **前端**：`/Users/samdediannao/skiing/frontend`
 - **后端云函数**：`/Users/samdediannao/skiing/backend/cloudfunctions`
@@ -320,3 +325,72 @@ const resortService = container.get('ResortSearchService')
 - `DEBUG_GUIDE.md` - 调试指南
 - `MOCK_MODE_GUIDE.md` - Mock模式使用指南
 - `docs/` - 详细设计文档
+
+---
+
+## 开发日志
+
+### 2026-02-10：高德地图 API 集成与搜索功能实现
+
+**核心功能完成**：
+1. ✅ 集成高德地图 Web Service API
+2. ✅ 实现滑雪场搜索功能
+3. ✅ TOP50 热门滑雪场数据
+4. ✅ 修复编译和启动问题
+
+**技术实现**：
+
+**1. 高德地图 API 集成**
+- 配置文件：`src/infrastructure/config/amap.config.js`
+- API Key：`41f98310392808752b5e9ea1e6bc4776`
+- 服务封装：`src/infrastructure/amap/AmapPoiService.js`
+- POI 搜索接口：`/v3/place/text`
+- 域名白名单：已在微信小程序后台配置 `restapi.amap.com`
+
+**2. 搜索架构**
+- **策略模式**：`src/domain/resort/strategies/ResortSortStrategy.js`
+  - 按人气排序：`sortByPopularity()`
+  - 按相关度排序：`sortByRelevance()`（支持距离和关键词匹配）
+  - Haversine 公式计算地理距离
+
+- **应用服务**：`src/application/services/ResortSearchAppService.js`
+  - 混合数据策略：本地缓存 → 高德 API → 本地 TOP50 fallback
+  - 24小时本地缓存
+  - 类型筛选（室内/室外）
+  - 关键词自动补全（如"石京龙" → "石京龙 滑雪场"）
+
+- **数据来源**：
+  - 无关键词：展示 TOP50 热门滑雪场
+  - 有关键词：调用高德 API 搜索，失败时在本地数据中搜索
+
+**3. TOP50 滑雪场数据**
+- 文件位置：`backend/database/init-data/top-resorts.js`
+- 数据来源：`ResortSearchAppService.js` 内嵌 Mock 数据
+- 覆盖范围：全国主要省市的热门滑雪场
+- 数据字段：name, province, city, district, type, popularity, latitude, longitude, trails, rating
+
+**4. 编译问题修复**
+- ✅ 添加 `project.config.json` 到源码根目录
+- ✅ 在 `pages.json` 中添加 `subPackages: []` 字段
+- ✅ 解决微信开发者工具 "Cannot read property 'subPackages' of undefined" 错误
+- ✅ 清除编译缓存并重新编译成功
+
+**5. 调试优化**
+- 添加详细的 console.log 日志
+- 日志标记：`[高德]`、`[加载]`、`[搜索]`、`[缓存]`、`[Fallback]`
+- 便于追踪数据流向和 API 调用情况
+
+**测试结果**：
+- ✅ 页面成功渲染（顶部标题栏、底部 TabBar、内容区域）
+- ✅ 能够加载 TOP50 热门滑雪场列表
+- ✅ 搜索功能正常工作
+- ✅ 高德 API 正常返回数据
+- ✅ 类型筛选功能正常
+
+**下一步计划**：
+- [ ] 实现滑雪场详情页
+- [ ] 添加地图展示功能
+- [ ] 实现收藏功能
+- [ ] 开发社群功能（笔记分享、寻找雪友）
+- [ ] 用户个人中心
+

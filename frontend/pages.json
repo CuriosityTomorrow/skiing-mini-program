@@ -46,6 +46,7 @@
     "navigationBarBackgroundColor": "#FFFFFF",
     "backgroundColor": "#F8F8F8"
   },
+  "subPackages": [],
   "easycom": {
     "autoscan": true,
     "custom": {
