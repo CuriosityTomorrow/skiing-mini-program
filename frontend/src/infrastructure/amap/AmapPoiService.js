@@ -30,8 +30,8 @@ export class AmapPoiService {
       const url = `${this.baseUrl}/place/text`
       const queryParams = {
         key: this.apiKey,
-        keywords: keywords,
-        types: '141210', // 高德分类：滑雪场
+        keywords: keywords + ' 滑雪场', // 关键词后加"滑雪场"提高准确度
+        // types: '141210', // 暂时不用types限制，提高搜索成功率
         city: city,
         offset: offset,
         extensions: 'all' // 返回详细信息
@@ -42,17 +42,24 @@ export class AmapPoiService {
         queryParams.radius = 50000 // 搜索半径50公里
       }
 
+      console.log('[高德] 请求URL:', url)
+      console.log('[高德] 请求参数:', JSON.stringify(queryParams))
+
       // 微信小程序网络请求
       const result = await this._request(url, queryParams)
 
+      console.log('[高德] 返回结果:', JSON.stringify(result).substring(0, 200))
+
       if (result.status === '1' && result.pois) {
+        console.log('[高德] 成功返回', result.pois.length, '个结果')
         return this._transformPois(result.pois)
       }
 
+      console.log('[高德] API返回状态异常:', result.status, result.info || '')
       return []
     } catch (error) {
       console.error('[高德搜索] 错误:', error)
-      return []
+      throw error // 重新抛出错误，让上层捕获
     }
   }
 
