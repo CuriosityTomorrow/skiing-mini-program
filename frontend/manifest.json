@@ -1,0 +1,26 @@
+{
+  "name": "滑雪小程序",
+  "appid": "__UNI__SKIING",
+  "description": "滑雪爱好者的小程序",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "vueVersion": "3",
+  "mp-weixin": {
+    "appid": "wx26ec61e86b268268",
+    "setting": {
+      "urlCheck": false,
+      "es6": true,
+      "enhance": true,
+      "postcss": true,
+      "minified": false
+    },
+    "usingComponents": true,
+    "permission": {
+      "scope.userLocation": {
+        "desc": "你的位置信息将用于寻找附近的滑雪场"
+      }
+    },
+    "requiredPrivateInfos": ["getLocation"]
+  }
+}

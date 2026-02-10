@@ -1,0 +1,47 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.DS_Store
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# HBuilderX
+.hbuilderx/
+unpackage/
+.hbuilderx/
+
+# WeChat Mini Program
+.miniprogram*/
+wechat-miniprogram/
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+
+# OS generated files
+Thumbs.db
+.DS_Store
+.Spotlight-V100
+.Trashes
+
+# Claude Code
+.claude/
