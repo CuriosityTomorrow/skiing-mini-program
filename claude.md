@@ -1,17 +1,16 @@
-# 滑雪小程序开发笔记
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 项目概述
 
-**项目名称**：滑雪场助手微信小程序
+**滑雪场助手微信小程序** - 帮助滑雪爱好者搜索和评价滑雪场的微信小程序
 
-**项目目标**：
-- 帮助滑雪爱好者选择滑雪场
+**核心功能**：
 - 搜索和筛选滑雪场（室内/室外）
 - 查看滑雪场详情（设施、票价、雪道、用户分享）
 - 收藏功能
 - 用户经验分享（寻找雪友、评价、照片分享）
-
-**开发时间**：2026年2月8日开始
 
 ---
 
@@ -19,220 +18,155 @@
 
 ### 前端
 - **框架**：uni-app (Vue 3)
-- **语言**：JavaScript（原计划 TypeScript，因编译问题改为 JS）
-- **IDE**：HBuilderX
-- **调试工具**：微信开发者工具
+- **语言**：JavaScript（注意：不是 TypeScript）
+- **UI组件**：@dcloudio/uni-ui
+- **构建工具**：Vite 5.0
+- **IDE**：HBuilderX + 微信开发者工具
 
 ### 后端
 - **云服务**：微信云开发
-- **数据库**：微信云数据库（MongoDB）
+- **数据库**：微信云数据库（类 MongoDB）
 - **云函数**：Node.js
 - **存储**：微信云存储
 
 ### 架构
 - **设计模式**：领域驱动设计（DDD）
-- **分层**：4层架构
-  - Domain（领域层）
-  - Application（应用层）
-  - Infrastructure（基础设施层）
-  - Interface（接口层）
+- **分层**：4层架构（Domain, Application, Infrastructure, Interface）
 
 ---
 
-## 关键配置信息
+## 关键配置
 
 ### 微信小程序
 - **AppID**：`wx26ec61e86b268268`
 - **环境ID**：`cloudbase-0g4g10cr89711adb`
 
 ### 项目路径
-- **前端路径**：`/Users/samdediannao/skiing/frontend`
-- **云函数路径**：`/Users/samdediannao/skiing/backend/cloudfunctions`
+- **前端**：`/Users/samdediannao/skiing/frontend`
+- **后端云函数**：`/Users/samdediannao/skiing/backend/cloudfunctions`
+
+---
+
+## 开发命令
+
+### 前端开发
+```bash
+cd frontend
+
+# 开发模式（微信小程序）
+npm run dev:mp-weixin
+
+# 构建生产版本
+npm run build:mp-weixin
+```
+
+### HBuilderX 运行
+- 右键项目 → 运行 → 运行到小程序模拟器 → 微信开发者工具
+- 代码会自动编译并在微信开发者工具中刷新
+
+### 云函数部署
+1. 在微信开发者工具中右键云函数目录
+2. 选择"上传并部署"
+3. 在云开发控制台查看日志
 
 ---
 
 ## 项目结构
 
 ```
-/Users/samdediannao/skiing/frontend/
-├── pages/                  # 页面
-│   └── resort/
-│       └── list/
-│           └── index.vue   # 滑雪场列表页（搜索页）
-├── domain/                 # 领域层
-│   ├── resort/            # 滑雪场领域
-│   │   ├── entities/      # 实体
-│   │   ├── repositories/  # 仓储接口
-│   │   └── services/      # 领域服务
-│   └── user/              # 用户领域
-├── application/           # 应用层
-│   ├── dto/              # 数据传输对象
-│   ├── mappers/          # 映射器
-│   └── services/         # 应用服务
-├── infrastructure/        # 基础设施层
-│   ├── api/             # API实现
-│   └── config/          # 配置
-├── interfaces/           # 接口层
-│   └── hooks/           # 组合式函数
-├── shared/              # 共享模块
-│   └── types/           # 类型定义
-├── di/                  # 依赖注入
-├── App.vue              # 根组件
-├── main.js              # 入口文件
-└── pages.json           # 页面配置
-
-/Users/samdediannao/skiing/backend/cloudfunctions/
-├── resort-search/       # 搜索滑雪场云函数
-├── resort-detail/       # 滑雪场详情云函数
-├── favorite-add/        # 添加收藏云函数
-└── favorite-remove/     # 取消收藏云函数
+/Users/samdediannao/skiing/
+├── frontend/                      # 前端应用
+│   ├── src/                       # 源代码（所有DDD层在这里）
+│   │   ├── domain/                # 领域层
+│   │   │   ├── resort/            # 滑雪场领域
+│   │   │   │   ├── entities/      # 实体
+│   │   │   │   ├── repositories/  # 仓储接口
+│   │   │   │   ├── services/      # 领域服务
+│   │   │   │   └── value-objects/ # 值对象
+│   │   │   ├── user/              # 用户领域
+│   │   │   ├── favorite/          # 收藏领域
+│   │   │   └── share/             # 分享领域
+│   │   ├── application/           # 应用层
+│   │   │   ├── dto/               # 数据传输对象
+│   │   │   ├── mappers/           # 映射器
+│   │   │   └── services/          # 应用服务
+│   │   ├── infrastructure/        # 基础设施层
+│   │   │   ├── api/               # API客户端
+│   │   │   ├── config/            # 配置
+│   │   │   ├── mock/              # Mock数据
+│   │   │   ├── storage/           # 本地存储
+│   │   │   └── map/               # 地图服务
+│   │   ├── interfaces/            # 接口层
+│   │   │   ├── hooks/             # 组合式函数
+│   │   │   └── components/        # 组件
+│   │   ├── pages/                 # 页面
+│   │   │   ├── resort/
+│   │   │   │   ├── list/          # 滑雪场列表页
+│   │   │   │   └── detail/        # 滑雪场详情页
+│   │   │   └── favorite/          # 收藏页
+│   │   ├── shared/                # 共享模块
+│   │   │   ├── types/             # 类型定义
+│   │   │   ├── constants/         # 常量
+│   │   │   └── utils/             # 工具函数
+│   │   ├── di/                    # 依赖注入容器
+│   │   ├── App.vue                # 根组件
+│   │   └── main.js                # 入口文件
+│   ├── manifest.json              # 小程序配置
+│   ├── pages.json                 # 页面配置
+│   ├── vite.config.js             # Vite配置
+│   └── package.json               # 依赖配置
+│
+└── backend/                       # 后端（云函数）
+    ├── cloudfunctions/            # 云函数目录
+    │   ├── resort-search/         # 搜索滑雪场
+    │   ├── resort-detail/         # 滑雪场详情
+    │   ├── favorite-add/          # 添加收藏
+    │   └── favorite-remove/       # 取消收藏
+    └── database/                  # 数据库设计和初始数据
+        └── init-data/
+            └── popular-resorts.js # 初始滑雪场数据
 ```
-
----
-
-## 开发流程
-
-### 1. 本地开发
-```
-HBuilderX（编辑代码）
-    ↓
-运行到微信开发者工具
-    ↓
-微信开发者工具（预览+调试）
-```
-
-### 2. 代码修改流程
-1. 在本地修改代码（通过 HBuilderX 或我直接修改）
-2. 保存文件
-3. 微信开发者工具自动刷新
-4. 在模拟器中查看效果
-5. 在控制台查看日志和错误
-
-### 3. 云函数部署流程
-1. 编写云函数代码（在 `backend/cloudfunctions/` 目录）
-2. 在微信开发者工具中上传云函数
-3. 在云开发控制台测试云函数
-4. 前端调用云函数
 
 ---
 
 ## 重要决策记录
 
-### 决策1：从 TypeScript 转为 JavaScript
-**时间**：2026年2月8日
-**原因**：
-- HBuilderX 对 TypeScript 的编译存在兼容性问题
-- Vue 3.4 与 TypeScript 类型检查冲突
-- 多次尝试配置 tsconfig.json 未果
-- 编译错误耗时过长
+### 决策1：使用 JavaScript 而非 TypeScript
+**原因**：HBuilderX 对 TypeScript 的编译存在兼容性问题
+**影响**：
+- 所有代码使用 `.js` 扩展名
+- 没有类型注解
+- interface 定义改为注释形式
 
-**结果**：
-- 将所有 `.ts` 文件重命名为 `.js`
-- 移除所有类型注解（`: string`, `ref<Type>()` 等）
-- 将 interface 定义转为注释
-- 项目成功编译运行
+**重要**：不要尝试添加 TypeScript，已经确认在当前环境下无法正常工作。
 
-**经验教训**：
-- uni-app + HBuilderX 组合对 TypeScript 支持有限
-- 如果再次遇到类似问题，可以考虑：
-  - 使用 Vue CLI 版本的 uni-app
-  - 等待 HBuilderX TypeScript 支持更成熟
-  - 或直接使用 JavaScript 开发
-
-### 决策2：扁平化项目结构
-**原计划**：所有代码在 `src/` 目录下
-**实际**：DDD 各层目录直接在项目根目录
-**原因**：HBuilderX 编译路径问题
-**结果**：成功编译
-
-### 决策3：使用相对路径导入
-**原计划**：使用 `@/` 别名导入
-**实际**：使用相对路径（`../../`, `../../../`）
-**原因**：HBuilderX 不支持 `@/` 别名
+### 决策2：使用相对路径导入
+**原因**：虽然 vite.config.js 中配置了 `@` 别名，但在 HBuilderX 编译时不稳定
 **规则**：
-- 1级目录（di/, application/等）：`../`
-- 2级目录（domain/resort/）：`../../`
-- 3级目录（domain/resort/entities/）：`../../../`
-- pages/ 目录：`../../../`
+- 同级目录：`./module`
+- 父级目录：`../module` 或 `../../module`
+- 避免使用 `@/` 别名
+
+### 决策3：DDD 分层在 src/ 目录下
+**结构**：所有 DDD 层（domain, application, infrastructure, interfaces）都在 `frontend/src/` 目录下
+**原因**：HBuilderX 编译需要这种结构
 
 ---
 
-## 当前进度
+## 数据库设计
 
-### ✅ 已完成
-1. **项目架构搭建**
-   - DDD 四层架构
-   - 依赖注入容器
-   - 领域实体和服务
-
-2. **微信云开发配置**
-   - 创建云开发环境
-   - 创建数据库集合 `resorts`
-   - 添加测试数据
-
-3. **滑雪场搜索页面**
-   - 搜索框
-   - 类型筛选（全部/室内/室外）
-   - 滑雪场列表
-   - 上拉加载更多
-   - 页面样式
-
-4. **云函数编写**
-   - `resort-search`：搜索滑雪场
-   - `resort-detail`：获取详情
-   - `favorite-add`：添加收藏
-   - `favorite-remove`：取消收藏
-
-5. **项目成功运行**
-   - 在微信开发者工具中成功运行
-   - 搜索页面正常显示
-
-### 🚧 进行中
-1. **云函数上传**
-   - 需要在微信开发者工具中上传云函数
-   - 测试云函数是否正常工作
-
-### 📋 待开发
-1. **滑雪场详情页**
-   - 基本信息
-   - 开放时间
-   - 票价信息
-   - 雪道信息
-   - 设施展示
-   - 用户分享（经验、评价、寻找雪友、照片）
-
-2. **收藏功能**
-   - 添加收藏
-   - 取消收藏
-   - 收藏列表
-
-3. **用户系统**
-   - 微信登录
-   - 用户信息
-   - 个人中心
-
-4. **分享功能**
-   - 发布滑雪经验
-   - 上传照片
-   - 评价滑雪场
-   - 寻找雪友
-
----
-
-## 数据库结构
-
-### resorts 集合
+### resorts 集合（滑雪场）
 ```javascript
 {
-  _id: String,              // 自动生成
+  _id: String,              // MongoDB自动生成
   id: String,               // 业务ID
   name: String,             // 滑雪场名称
   province: String,         // 省份
   city: String,             // 城市
-  address: String,          // 地址
+  address: String,          // 详细地址
   latitude: Number,         // 纬度
   longitude: Number,        // 经度
-  type: String,             // 类型：'indoor' | 'outdoor'
+  type: String,             // 'indoor' | 'outdoor'
   facilities: {             // 设施
     hasRental: Boolean,     // 租雪具
     hasParking: Boolean,    // 停车场
@@ -242,13 +176,11 @@ HBuilderX（编辑代码）
   },
   openTime: String,         // 开放时间 "9:00"
   closeTime: String,        // 关闭时间 "18:00"
-  tickets: [                // 票价
-    {
-      type: String,         // 票种
-      price: Number,        // 价格
-      description: String   // 描述
-    }
-  ],
+  tickets: [{               // 票价
+    type: String,           // 票种
+    price: Number,          // 价格
+    description: String     // 描述
+  }],
   trails: {                 // 雪道
     totalCount: Number,     // 总数
     beginner: Number,       // 初级
@@ -264,32 +196,30 @@ HBuilderX（编辑代码）
 
 ---
 
-## 云函数接口
+## 云函数 API
 
-### resort-search
-**功能**：搜索滑雪场
-**参数**：
+### resort-search（搜索滑雪场）
+**请求参数**：
 ```javascript
 {
-  keyword: String,   // 搜索关键词（城市/省份/名称）
-  type: String,      // 类型 'indoor' | 'outdoor'
-  limit: Number,     // 返回数量（默认20）
-  offset: Number     // 分页偏移量
+  keyword: String,   // 搜索关键词（可选）
+  type: String,      // 'indoor' | 'outdoor' | 'all'
+  limit: Number,     // 返回数量，默认20
+  offset: Number     // 分页偏移量，默认0
 }
 ```
 **返回**：
 ```javascript
 {
-  code: Number,      // 0:成功, -1:失败
+  code: 0,           // 0成功, -1失败
   message: String,   // 消息
   data: Array,       // 滑雪场列表
-  total: Number      // 数量
+  total: Number      // 总数
 }
 ```
 
-### resort-detail
-**功能**：获取滑雪场详情
-**参数**：
+### resort-detail（滑雪场详情）
+**请求参数**：
 ```javascript
 {
   id: String         // 滑雪场ID
@@ -298,103 +228,95 @@ HBuilderX（编辑代码）
 **返回**：
 ```javascript
 {
-  code: Number,      // 0:成功, -1:失败
-  message: String,   // 消息
-  data: Object       // 滑雪场详情
+  code: 0,
+  message: String,
+  data: Object       // 滑雪场详情对象
+}
+```
+
+### favorite-add / favorite-remove
+**请求参数**：
+```javascript
+{
+  resortId: String,  // 滑雪场ID
+  userId: String     // 用户ID（通常从云函数上下文获取）
 }
 ```
 
 ---
 
-## 常用命令
+## 开发注意事项
 
-### HBuilderX
-- **运行到微信开发者工具**：右键项目 → 运行 → 运行到小程序模拟器 → 微信开发者工具
-- **重新编译**：停止运行 → 重新运行
-
-### 微信开发者工具
-- **打开云开发控制台**：点击工具栏 "云开发" 按钮
-- **上传云函数**：右键 cloudfunctions 目录下的函数文件夹 → 上传并部署
-- **查看日志**：控制台 → 云函数 → 日志
-- **查看数据库**：云开发控制台 → 数据库
-
-### 调试技巧
-- **查看 console.log**：微信开发者工具 → 控制台
-- **查看网络请求**：微信开发者工具 → Network
-- **查看页面元素**：微信开发者工具 → DevTools（Elements）
+### 调试
+- **查看日志**：微信开发者工具 → 控制台
+- **查看网络请求**：微信开发者工具 → Network 标签
+- **云函数日志**：云开发控制台 → 云函数 → 日志
 - **清除缓存**：工具栏 → 清除缓存 → 全部清除
 
+### 常见问题
+
+**问题：模块导入错误**
+- 检查是否使用了相对路径（不要用 `@/` 别名）
+- 确认文件扩展名是 `.js` 而非 `.ts`
+
+**问题：云函数调用失败**
+- 确认云函数已上传部署
+- 检查环境ID配置是否正确
+- 查看云函数日志排查错误
+
+**问题：页面不刷新**
+- 保存文件后等待1-2秒
+- 如果未自动刷新，手动点击微信开发者工具的"编译"按钮
+- 必要时清除缓存重新编译
+
 ---
 
-## 问题解决记录
+## DDD 架构说明
 
-### 问题1：HBuilderX 自动选择 VSCode 风格
-**现象**：项目总是被识别为 VS Code 项目
-**解决**：清除 HBuilderX 用户配置
-```bash
-rm -rf ~/Library/Application\ Support/HBuilder\ X/
-rm ~/Library/Preferences/io.dcloud.HBuilderX.plist
+### 依赖方向
+```
+Interface (UI) → Application → Domain ← Infrastructure
 ```
 
-### 问题2：TypeScript 编译错误
-**现象**：各种 TypeScript 类型检查错误
-**尝试方案**：
-1. 修改 tsconfig.json（无效）
-2. 降级 Vue 版本（无效）
-3. 排除 .vue 文件（无效）
-**最终方案**：转换为 JavaScript
+### 各层职责
 
-### 问题3：模块导入路径错误
-**现象**：Module not found 错误
-**原因**：使用了 `@/` 别名，HBuilderX 不支持
-**解决**：全部改为相对路径
+**Domain（领域层）**：
+- 核心业务逻辑
+- 实体（Entity）和值对象（Value Object）
+- 仓储接口定义（不包含实现）
+- 领域服务
 
----
+**Application（应用层）**：
+- 用例编排
+- 调用领域服务
+- DTO 转换
+- 事务管理
 
-## 下一步计划
+**Infrastructure（基础设施层）**：
+- 仓储实现（API调用、本地存储）
+- 第三方服务集成
+- 配置管理
+- Mock 数据
 
-### 立即任务
-1. **上传云函数**
-   - 在微信开发者工具中上传 `resort-search`
-   - 在微信开发者工具中上传 `resort-detail`
-   - 测试搜索功能
+**Interface（接口层）**：
+- 页面（pages/）
+- 组件（components/）
+- 组合式函数（hooks/）
 
-2. **测试搜索功能**
-   - 查看是否能正常加载滑雪场列表
-   - 测试搜索功能
-   - 测试筛选功能
-
-### 短期任务
-1. **实现详情页**
-   - 创建详情页面
-   - 实现详情展示
-   - 测试跳转
-
-2. **优化搜索体验**
-   - 添加加载动画
-   - 优化错误提示
-   - 添加空状态
-
-### 中期任务
-1. **收藏功能**
-2. **用户登录**
-3. **分享功能**
+### 依赖注入
+使用 `src/di/container.js` 管理依赖注入：
+```javascript
+import { container } from '@/di/container'
+const resortService = container.get('ResortSearchService')
+```
 
 ---
 
-## 联系方式
+## 相关文档
 
-如果需要继续开发，直接告诉 Claude：
-- "继续开发"
-- "实现详情页"
-- "添加收藏功能"
-- 或者直接描述需求
-
-Claude 可以：
-- 查看和修改任何代码文件
-- 运行终端命令
-- 创建新文件
-- 调试问题
-- 查看日志
-
-**注意**：所有代码修改会实时同步到微信开发者工具，你可以立即看到效果。
+- `README.md` - DDD架构设计详细说明
+- `GET_STARTED.md` - 快速开始指南
+- `QUICKREF.md` - 快速参考
+- `DEBUG_GUIDE.md` - 调试指南
+- `MOCK_MODE_GUIDE.md` - Mock模式使用指南
+- `docs/` - 详细设计文档
