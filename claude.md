@@ -54,20 +54,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 开发命令
 
-### 前端开发
-```bash
-cd frontend
+### ⚠️ 重要：请使用 HBuilderX 编译
+**不要使用命令行编译此项目**（`npm run dev:mp-weixin` 或 `npm run build:mp-weixin`）
 
-# 开发模式（微信小程序）
-npm run dev:mp-weixin
+**原因**：
+- 这是微信小程序项目，使用 HBuilderX 编译最稳定
+- 命令行编译容易引入兼容性问题和构建错误
+- HBuilderX 对 uni-app 微信小程序有最佳支持
 
-# 构建生产版本
-npm run build:mp-weixin
-```
-
-### HBuilderX 运行
-- 右键项目 → 运行 → 运行到小程序模拟器 → 微信开发者工具
-- 代码会自动编译并在微信开发者工具中刷新
+### 正确的开发流程
+1. 使用 HBuilderX 打开项目
+2. 右键项目 → 运行 → 运行到小程序模拟器 → 微信开发者工具
+3. 代码会自动编译并在微信开发者工具中刷新
 
 ### 云函数部署
 1. 在微信开发者工具中右键云函数目录

@@ -1,13 +1,17 @@
 import { ResortSortStrategy } from '../../domain/resort/strategies/ResortSortStrategy.js'
+import { ResortFilterService } from '../../domain/resort/services/ResortFilterService.domain.js'
+import { ResortScoringService } from '../../domain/resort/services/ResortScoringService.domain.js'
 import { AmapPoiService } from '../../infrastructure/amap/AmapPoiService.js'
 
 /**
  * 滑雪场搜索应用服务
- * 整合高德API、缓存、排序等逻辑
+ * 整合高德API、缓存、排序、筛选、评分等逻辑
  */
 export class ResortSearchAppService {
   constructor() {
     this.sortStrategy = new ResortSortStrategy()
+    this.filterService = new ResortFilterService()
+    this.scoringService = new ResortScoringService()
     this.amapService = new AmapPoiService()
     this.cacheKey = 'resort_search_cache'
     this.cacheExpireTime = 24 * 60 * 60 * 1000 // 24小时
@@ -17,11 +21,19 @@ export class ResortSearchAppService {
    * 获取滑雪场列表
    * @param {Object} params
    * @param {String} params.keyword - 搜索关键词
-   * @param {String} params.type - 类型筛选 all/indoor/outdoor
+   * @param {String} params.type - 类型筛选 all/indoor/outdoor (向后兼容)
    * @param {Object} params.userLocation - 用户位置
+   * @param {Object} params.filters - 高级筛选条件（基于 FilterSchema）
+   * @param {String} params.sortBy - 排序方式（基于 SortOptions）
    */
   async getResorts(params = {}) {
-    const { keyword = '', type = 'all', userLocation = null } = params
+    const {
+      keyword = '',
+      type = 'all',
+      userLocation = null,
+      filters = {},
+      sortBy = null
+    } = params
 
     try {
       let resorts = []
@@ -35,13 +47,35 @@ export class ResortSearchAppService {
         resorts = await this._searchFromAmap(keyword, userLocation)
       }
 
-      // 2. 类型筛选
+      // 2. 向后兼容：type 参数转换为 filters
+      const finalFilters = { ...filters }
       if (type !== 'all') {
-        resorts = resorts.filter(r => r.type === type)
+        finalFilters.resortType = type
       }
 
-      // 3. 排序
-      if (!keyword || keyword.trim() === '') {
+      // 3. 应用高级筛选（Nomads风格）
+      if (Object.keys(finalFilters).length > 0) {
+        console.log('[筛选] 应用筛选条件:', finalFilters)
+        resorts = this.filterService.applyFilters(resorts, finalFilters)
+        console.log('[筛选] 筛选后剩余:', resorts.length, '个')
+      }
+
+      // 4. 计算评分（如果还没有评分）
+      resorts = resorts.map(resort => {
+        if (!resort.scores || Object.keys(resort.scores).length === 0) {
+          return {
+            ...resort,
+            scores: this.scoringService.calculateAllScores(resort)
+          }
+        }
+        return resort
+      })
+
+      // 5. 排序
+      if (sortBy) {
+        // 使用指定的排序方式
+        resorts = this._applySorting(resorts, sortBy, keyword, userLocation)
+      } else if (!keyword || keyword.trim() === '') {
         // 默认：按人气排序
         resorts = this.sortStrategy.sortByPopularity(resorts)
       } else {
@@ -62,6 +96,76 @@ export class ResortSearchAppService {
         total: 0,
         error: error.message
       }
+    }
+  }
+
+  /**
+   * 应用排序规则
+   */
+  _applySorting(resorts, sortBy, keyword = '', userLocation = null) {
+    console.log('[排序] 使用排序方式:', sortBy)
+
+    switch (sortBy) {
+      case 'popularity':
+        return this.sortStrategy.sortByPopularity(resorts)
+      case 'relevance':
+        return this.sortStrategy.sortByRelevance(resorts, keyword, userLocation)
+      case 'price_low':
+        return resorts.sort((a, b) => {
+          const priceA = a.pricing?.avgCost || a.pricing?.daily || 999999
+          const priceB = b.pricing?.avgCost || b.pricing?.daily || 999999
+          return priceA - priceB
+        })
+      case 'price_high':
+        return resorts.sort((a, b) => {
+          const priceA = a.pricing?.avgCost || a.pricing?.daily || 0
+          const priceB = b.pricing?.avgCost || b.pricing?.daily || 0
+          return priceB - priceA
+        })
+      case 'rating':
+        return resorts.sort((a, b) => {
+          const ratingA = a.community?.rating || 0
+          const ratingB = b.community?.rating || 0
+          return ratingB - ratingA
+        })
+      case 'trail_count':
+        return resorts.sort((a, b) => {
+          const countA = a.trails?.total || a.trails?.totalCount || 0
+          const countB = b.trails?.total || b.trails?.totalCount || 0
+          return countB - countA
+        })
+      case 'overall_score':
+        return resorts.sort((a, b) => {
+          const scoreA = a.scores?.overall || 0
+          const scoreB = b.scores?.overall || 0
+          return scoreB - scoreA
+        })
+      case 'beginner_score':
+        return resorts.sort((a, b) => {
+          const scoreA = a.scores?.beginner || 0
+          const scoreB = b.scores?.beginner || 0
+          return scoreB - scoreA
+        })
+      case 'expert_score':
+        return resorts.sort((a, b) => {
+          const scoreA = a.scores?.expert || 0
+          const scoreB = b.scores?.expert || 0
+          return scoreB - scoreA
+        })
+      case 'family_score':
+        return resorts.sort((a, b) => {
+          const scoreA = a.scores?.family || 0
+          const scoreB = b.scores?.family || 0
+          return scoreB - scoreA
+        })
+      case 'value_score':
+        return resorts.sort((a, b) => {
+          const scoreA = a.scores?.value || 0
+          const scoreB = b.scores?.value || 0
+          return scoreB - scoreA
+        })
+      default:
+        return resorts
     }
   }
 
@@ -239,6 +343,32 @@ export class ResortSearchAppService {
       })
     } catch (e) {
       console.error('[缓存] 设置缓存失败:', e)
+    }
+  }
+
+  /**
+   * 获取可用的筛选选项（用于UI动态渲染）
+   * 基于当前数据集统计可用的筛选维度
+   */
+  async getFilterOptions() {
+    try {
+      // 获取所有热门滑雪场数据
+      const resorts = await this._getPopularResorts()
+
+      // 使用筛选服务生成可用选项
+      const options = this.filterService.getAvailableFilterOptions(resorts)
+
+      return {
+        success: true,
+        data: options
+      }
+    } catch (error) {
+      console.error('[ResortSearchAppService] 获取筛选选项失败:', error)
+      return {
+        success: false,
+        data: null,
+        error: error.message
+      }
     }
   }
 }

@@ -8,6 +8,18 @@
       }
     },
     {
+      "path": "src/pages/resort/detail/index",
+      "style": {
+        "navigationBarTitleText": "滑雪场详情"
+      }
+    },
+    {
+      "path": "src/pages/resort/compare/index",
+      "style": {
+        "navigationBarTitleText": "滑雪场对比"
+      }
+    },
+    {
       "path": "src/pages/community/index",
       "style": {
         "navigationBarTitleText": "滑雪社群"
