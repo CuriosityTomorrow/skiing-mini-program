@@ -1,6 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gray-50 flex">
+    <AdminSidebar />
+    <div class="flex-1 px-6 py-8">
       <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-900">滑雪场管理</h1>
         <NuxtLink to="/admin/resorts/new" class="px-4 py-2 bg-nomad-gradient text-white rounded-lg font-medium hover:opacity-90">
@@ -76,6 +77,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 definePageMeta({ middleware: 'admin', layout: false })
