@@ -133,75 +133,51 @@
           v-for="resort in resortList"
           :key="resort.id"
           :to="`/resorts/${resort.id}`"
-          class="group block"
+          class="group block rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300"
         >
-          <div class="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-lg hover:border-nomad-200 transition-all duration-300 h-full flex flex-col">
-            <!-- Header Row: Name + Type Badge -->
-            <div class="flex items-start justify-between mb-2">
-              <h3 class="text-base font-bold text-gray-900 group-hover:text-nomad-500 transition-colors line-clamp-1 flex-1 mr-2">
-                {{ resort.name }}
-              </h3>
-              <span
-                class="flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-medium"
-                :class="resort.type === 'indoor' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'"
-              >
+          <div class="relative h-52">
+            <!-- Image -->
+            <img
+              :src="getResortImage(resort)"
+              :alt="resort.name"
+              class="w-full h-full object-cover scale-100 group-hover:scale-105 group-hover:blur-sm transition-all duration-500"
+              @error="(e) => e.target.src = fallbackImage"
+            />
+            <!-- Default overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent group-hover:opacity-0 transition-opacity duration-300"></div>
+            <!-- Hover overlay -->
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center px-5 py-4">
+              <div class="space-y-2.5">
+                <div v-for="metric in getMetrics(resort)" :key="metric.label" class="flex items-center gap-2">
+                  <span class="text-sm w-4">{{ metric.icon }}</span>
+                  <span class="text-white/70 text-xs w-10 shrink-0">{{ metric.label }}</span>
+                  <div class="flex-1 bg-white/20 rounded-full h-1.5">
+                    <div class="h-1.5 rounded-full" :class="metric.color" :style="{ width: metric.pct + '%' }"></div>
+                  </div>
+                  <span class="text-white text-xs font-semibold w-10 text-right shrink-0">{{ metric.value }}</span>
+                </div>
+              </div>
+            </div>
+            <!-- Top badges -->
+            <div class="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
+              <span class="px-2 py-0.5 rounded-full text-xs font-medium backdrop-blur-sm"
+                :class="resort.type === 'indoor' ? 'bg-blue-500/80 text-white' : 'bg-green-500/80 text-white'">
                 {{ resort.type === 'indoor' ? '室内' : '室外' }}
               </span>
-            </div>
-
-            <!-- Location -->
-            <p class="text-sm text-gray-500 mb-3">
-              {{ resort.province }} {{ resort.city }}
-            </p>
-
-            <!-- Tags -->
-            <div v-if="resort.tags && resort.tags.length" class="flex flex-wrap gap-1.5 mb-3">
-              <span
-                v-for="tag in resort.tags.slice(0, 3)"
-                :key="tag"
-                class="px-2 py-0.5 rounded-md text-xs font-medium"
-                :class="getTagColor(tag)"
-              >
-                {{ tag }}
+              <span class="px-2 py-0.5 rounded-full text-xs font-medium backdrop-blur-sm"
+                :class="isOpen(resort) ? 'bg-emerald-500/90 text-white' : 'bg-gray-500/80 text-white'">
+                {{ isOpen(resort) ? '● 开板中' : '○ 未开板' }}
               </span>
             </div>
-
-            <!-- Spacer -->
-            <div class="flex-1"></div>
-
-            <!-- Stats Row -->
-            <div class="flex items-center justify-between pt-3 border-t border-gray-100 text-sm">
-              <!-- Popularity -->
-              <div class="flex items-center space-x-1" :title="`人气 ${resort.popularity}`">
-                <span class="text-orange-500">🔥</span>
-                <span class="font-medium text-gray-700">{{ resort.popularity }}</span>
+            <!-- Default bottom info -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 group-hover:opacity-0 transition-opacity duration-300">
+              <h3 class="text-white font-bold text-base leading-tight mb-1">{{ resort.name }}</h3>
+              <p class="text-white/75 text-xs">{{ resort.province }} · {{ resort.city }}</p>
+              <div class="flex items-center gap-3 mt-2 text-white/90 text-xs">
+                <span>★ {{ resort.rating?.toFixed(1) || '-' }}</span>
+                <span>🎿 {{ resort.trails?.total || '-' }} 雪道</span>
+                <span v-if="resort.pricing?.weekdayDaily">¥{{ resort.pricing.weekdayDaily }}/天</span>
               </div>
-
-              <!-- Rating -->
-              <div class="flex items-center space-x-1">
-                <span class="text-yellow-500">★</span>
-                <span class="font-medium text-gray-700">{{ resort.rating?.toFixed(1) || '-' }}</span>
-              </div>
-
-              <!-- Trail Count -->
-              <div class="text-gray-500" v-if="resort.trails">
-                {{ resort.trails.total || '-' }} 雪道
-              </div>
-
-              <!-- Daily Price -->
-              <div class="text-gray-700 font-medium" v-if="resort.pricing && resort.pricing.weekdayDaily">
-                ¥{{ resort.pricing.weekdayDaily }}<span class="text-gray-400 text-xs font-normal">/天</span>
-              </div>
-              <div v-else class="text-gray-400 text-xs">
-                价格待定
-              </div>
-            </div>
-
-            <!-- View Detail Link -->
-            <div class="mt-3 text-right">
-              <span class="text-xs text-nomad-500 group-hover:text-nomad-700 font-medium transition-colors">
-                查看详情 →
-              </span>
             </div>
           </div>
         </NuxtLink>
@@ -309,6 +285,20 @@ function clearFilters() {
   router.push({ path: '/resorts' })
 }
 
+// Hover tooltip metrics
+function getMetrics(resort) {
+  const rating = resort.rating || 0
+  const popularity = resort.popularity || 0
+  const trails = resort.trails?.total || 0
+  const price = resort.pricing?.weekdayDaily || 0
+  return [
+    { icon: '⭐️', label: '评分', value: rating.toFixed(1), pct: (rating / 5) * 100, color: 'bg-yellow-400' },
+    { icon: '🔥', label: '人气', value: popularity, pct: Math.min((popularity / 100) * 100, 100), color: 'bg-orange-400' },
+    { icon: '🎿', label: '雪道', value: trails + '条', pct: Math.min((trails / 50) * 100, 100), color: 'bg-blue-400' },
+    { icon: '💰', label: '价格', value: price ? '¥' + price : '-', pct: price ? Math.max(100 - (price / 1000) * 100, 10) : 0, color: 'bg-green-400' },
+  ]
+}
+
 // Tag color helper
 const tagColors = [
   'bg-purple-100 text-purple-700',
@@ -320,12 +310,30 @@ const tagColors = [
 ]
 
 function getTagColor(tag) {
-  // Deterministic color based on tag string
   let hash = 0
   for (let i = 0; i < tag.length; i++) {
     hash = tag.charCodeAt(i) + ((hash << 5) - hash)
   }
   return tagColors[Math.abs(hash) % tagColors.length]
+}
+
+const fallbackImage = 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&q=80'
+
+function getResortImage(resort) {
+  return resort.images?.[0] || fallbackImage
+}
+
+function isOpen(resort) {
+  if (!resort.season) return false
+  const season = typeof resort.season === 'string' ? JSON.parse(resort.season) : resort.season
+  if (season.yearRound) return true
+  const now = new Date()
+  const month = now.getMonth() + 1
+  const open = season.openMonth
+  const close = season.closeMonth
+  // Handle cross-year season (e.g. Nov-Mar)
+  if (open > close) return month >= open || month <= close
+  return month >= open && month <= close
 }
 </script>
 

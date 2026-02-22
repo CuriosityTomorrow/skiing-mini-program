@@ -14,7 +14,7 @@
             找到最适合你的滑雪场
           </h1>
           <p class="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto">
-            中国 50+ 滑雪场数据对比平台，多维度评分，助你选出完美雪场
+            发现中国最好的滑雪场
           </p>
 
           <!-- Search Bar -->
@@ -52,26 +52,6 @@
       </div>
     </section>
 
-    <!-- Quick Stats Section -->
-    <section class="py-12 md:py-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-3 gap-4 md:gap-8">
-          <div class="text-center p-4 md:p-6 rounded-2xl bg-white shadow-sm border border-gray-100">
-            <div class="text-3xl md:text-4xl font-bold bg-nomad-gradient bg-clip-text text-transparent">50+</div>
-            <div class="text-sm md:text-base text-gray-500 mt-1">滑雪场</div>
-          </div>
-          <div class="text-center p-4 md:p-6 rounded-2xl bg-white shadow-sm border border-gray-100">
-            <div class="text-3xl md:text-4xl font-bold bg-nomad-gradient bg-clip-text text-transparent">20+</div>
-            <div class="text-sm md:text-base text-gray-500 mt-1">筛选维度</div>
-          </div>
-          <div class="text-center p-4 md:p-6 rounded-2xl bg-white shadow-sm border border-gray-100">
-            <div class="text-3xl md:text-4xl font-bold bg-nomad-gradient bg-clip-text text-transparent">6</div>
-            <div class="text-sm md:text-base text-gray-500 mt-1">维度评分</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- Featured Resorts Section -->
     <section class="py-12 md:py-16 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -105,54 +85,44 @@
 
         <!-- Resort Cards Grid -->
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <NuxtLink
-            v-for="resort in featuredResorts"
-            :key="resort.id"
-            :to="`/resorts/${resort.id}`"
-            class="group block"
-          >
-            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:shadow-lg hover:border-nomad-200 transition-all duration-300 h-full">
-              <!-- Header: Name + Type Badge -->
-              <div class="flex items-start justify-between mb-3">
-                <h3 class="text-lg font-bold text-gray-900 group-hover:text-nomad-500 transition-colors line-clamp-1">
-                  {{ resort.name }}
-                </h3>
-                <span
-                  class="flex-shrink-0 ml-2 px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="resort.type === 'indoor' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'"
-                >
-                  {{ resort.type === 'indoor' ? '室内' : '室外' }}
-                </span>
-              </div>
+          <NuxtLink v-for="resort in featuredResorts" :key="resort.id" :to="`/resorts/${resort.id}`" class="group block rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300">
+            <div class="relative h-52">
+              <!-- Image (blurs on hover) -->
+              <img
+                :src="resort.images?.[0] || fallbackImage"
+                :alt="resort.name"
+                class="w-full h-full object-cover scale-100 group-hover:scale-105 group-hover:blur-sm transition-all duration-500"
+                @error="(e) => e.target.src = fallbackImage"
+              />
+              <!-- Default overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent group-hover:opacity-0 transition-opacity duration-300"></div>
+              <!-- Hover overlay (dark bg for metrics) -->
+              <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center px-5 py-4">
 
-              <!-- Location -->
-              <p class="text-sm text-gray-500 mb-4">
-                📍 {{ resort.province }} {{ resort.city }}
-              </p>
-
-              <!-- Tags -->
-              <div v-if="resort.tags && resort.tags.length" class="flex flex-wrap gap-1.5 mb-4">
-                <span
-                  v-for="tag in resort.tags.slice(0, 3)"
-                  :key="tag"
-                  class="px-2 py-0.5 rounded-md text-xs bg-nomad-50 text-nomad-600 font-medium"
-                >
-                  {{ tag }}
-                </span>
-              </div>
-
-              <!-- Stats Row -->
-              <div class="flex items-center justify-between pt-3 border-t border-gray-200">
-                <div class="flex items-center space-x-1">
-                  <span class="text-yellow-500 text-sm">★</span>
-                  <span class="text-sm font-semibold text-gray-700">{{ resort.rating?.toFixed(1) || '-' }}</span>
+                <div class="space-y-2.5">
+                  <div v-for="metric in getMetrics(resort)" :key="metric.label" class="flex items-center gap-2">
+                    <span class="text-sm w-4">{{ metric.icon }}</span>
+                    <span class="text-white/70 text-xs w-10 shrink-0">{{ metric.label }}</span>
+                    <div class="flex-1 bg-white/20 rounded-full h-1.5">
+                      <div class="h-1.5 rounded-full" :class="metric.color" :style="{ width: metric.pct + '%' }"></div>
+                    </div>
+                    <span class="text-white text-xs font-semibold w-10 text-right shrink-0">{{ metric.value }}</span>
+                  </div>
                 </div>
-                <div class="flex items-center space-x-1 text-sm text-gray-500">
-                  <span>🔥</span>
-                  <span>{{ resort.popularity }}</span>
-                </div>
-                <div v-if="resort.trails" class="text-sm text-gray-500">
-                  {{ resort.trails.total || '-' }} 条雪道
+              </div>
+              <!-- Type badge -->
+              <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full text-xs font-medium backdrop-blur-sm z-10"
+                :class="resort.type === 'indoor' ? 'bg-blue-500/80 text-white' : 'bg-green-500/80 text-white'">
+                {{ resort.type === 'indoor' ? '室内' : '室外' }}
+              </span>
+              <!-- Default bottom info (hides on hover) -->
+              <div class="absolute bottom-0 left-0 right-0 p-4 group-hover:opacity-0 transition-opacity duration-300">
+                <h3 class="text-white font-bold text-base leading-tight mb-1">{{ resort.name }}</h3>
+                <p class="text-white/75 text-xs">{{ resort.province }} · {{ resort.city }}</p>
+                <div class="flex items-center gap-3 mt-2 text-white/90 text-xs">
+                  <span>★ {{ resort.rating?.toFixed(1) || '-' }}</span>
+                  <span>🎿 {{ resort.trails?.total || '-' }} 雪道</span>
+                  <span v-if="resort.pricing?.weekdayDaily">¥{{ resort.pricing.weekdayDaily }}/天</span>
                 </div>
               </div>
             </div>
@@ -232,6 +202,21 @@ function handleSearch() {
   } else {
     navigateTo('/resorts')
   }
+}
+
+const fallbackImage = 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&q=80'
+
+function getMetrics(resort) {
+  const rating = resort.rating || 0
+  const popularity = resort.popularity || 0
+  const trails = resort.trails?.total || 0
+  const price = resort.pricing?.weekdayDaily || 0
+  return [
+    { icon: '⭐️', label: '评分', value: rating.toFixed(1), pct: (rating / 5) * 100, color: 'bg-yellow-400' },
+    { icon: '🔥', label: '人气', value: popularity, pct: Math.min((popularity / 100) * 100, 100), color: 'bg-orange-400' },
+    { icon: '🎿', label: '雪道', value: trails + '条', pct: Math.min((trails / 50) * 100, 100), color: 'bg-blue-400' },
+    { icon: '💰', label: '价格', value: price ? '¥' + price : '-', pct: price ? Math.max(100 - (price / 1000) * 100, 10) : 0, color: 'bg-green-400' },
+  ]
 }
 </script>
 

@@ -1,5 +1,24 @@
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
 
+export const users = sqliteTable('users', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  phone: text('phone').unique(),
+  wechatOpenid: text('wechat_openid').unique(),
+  nickname: text('nickname'),
+  avatarUrl: text('avatar_url'),
+  role: text('role').default('user'),
+  createdAt: integer('created_at', { mode: 'timestamp' }),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }),
+})
+
+export const authCodes = sqliteTable('auth_codes', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  phone: text('phone').notNull(),
+  code: text('code').notNull(),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+  used: integer('used', { mode: 'boolean' }).default(false),
+})
+
 export const resorts = sqliteTable('resorts', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),
@@ -22,6 +41,7 @@ export const resorts = sqliteTable('resorts', {
   suitableFor: text('suitable_for', { mode: 'json' }),
   highlights: text('highlights', { mode: 'json' }),
   tags: text('tags', { mode: 'json' }),
+  images: text('images', { mode: 'json' }),
   createdAt: integer('created_at', { mode: 'timestamp' }),
   updatedAt: integer('updated_at', { mode: 'timestamp' }),
 })
