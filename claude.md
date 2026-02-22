@@ -69,6 +69,7 @@ npm run build        # 生产构建
 npm run db:seed      # 初始化 TOP50 滑雪场数据（首次必须执行）
 npm run db:push      # 推送 Drizzle schema 变更到 SQLite
 npm run db:generate  # 生成 Drizzle migration 文件
+npm run db:studio    # 启动数据库可视化界面 → 打开 https://local.drizzle.studio
 ```
 
 ### 云函数部署
