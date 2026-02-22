@@ -39,11 +39,22 @@
 
           <!-- Profile Icon -->
           <div class="flex items-center space-x-4">
-            <button class="p-2 rounded-full text-gray-500 hover:text-nomad-500 hover:bg-gray-100 transition-colors">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </button>
+            <NuxtLink v-if="!user" to="/login" class="px-4 py-1.5 bg-nomad-gradient text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity">
+              登录
+            </NuxtLink>
+            <div v-else class="relative group">
+              <button class="flex items-center gap-2 p-1.5 rounded-full hover:bg-gray-100 transition-colors">
+                <div class="w-8 h-8 rounded-full bg-nomad-gradient flex items-center justify-center text-white text-sm font-bold">
+                  {{ user.nickname?.[0] || '我' }}
+                </div>
+              </button>
+              <!-- Dropdown -->
+              <div class="absolute right-0 top-full mt-1 w-36 bg-white rounded-xl shadow-lg border border-gray-100 py-1 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-50">
+                <div class="px-3 py-2 text-sm font-medium text-gray-900 border-b border-gray-100">{{ user.nickname }}</div>
+                <NuxtLink v-if="user.role === 'admin'" to="/admin/resorts" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">🛠 管理后台</NuxtLink>
+                <button class="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-gray-50" @click="logout">退出登录</button>
+              </div>
+            </div>
             <!-- Mobile menu button -->
             <button
               class="md:hidden p-2 rounded-md text-gray-500 hover:text-nomad-500 hover:bg-gray-100"
@@ -121,8 +132,20 @@
 
 <script setup>
 const mobileMenuOpen = ref(false)
+const user = ref(null)
 
-// Close mobile menu on route change
+onMounted(() => {
+  const stored = localStorage.getItem('user')
+  if (stored) user.value = JSON.parse(stored)
+})
+
+function logout() {
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+  user.value = null
+  navigateTo('/')
+}
+
 const route = useRoute()
 watch(() => route.path, () => {
   mobileMenuOpen.value = false
