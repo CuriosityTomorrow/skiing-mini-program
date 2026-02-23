@@ -346,7 +346,7 @@ function trailPercent(level) {
 
 // Page title
 useHead({
-  title: computed(() => resort.value ? `${resort.value.name} - 滑雪场指南` : '加载中... - 滑雪场指南'),
+  title: computed(() => resort.value ? `${resort.value.name} - 去滑雪吧` : '加载中... - 去滑雪吧'),
 })
 </script>
 

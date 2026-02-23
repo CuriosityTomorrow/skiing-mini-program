@@ -20,7 +20,12 @@ export const authCodes = sqliteTable('auth_codes', {
 })
 
 
-export const resorts = sqliteTable('resorts', {
+export const favorites = sqliteTable('favorites', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: integer('user_id').notNull(),
+  resortId: integer('resort_id').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }),
+})
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),
   province: text('province').notNull(),

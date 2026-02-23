@@ -94,21 +94,16 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div v-for="i in 9" :key="i" class="animate-pulse">
-          <div class="bg-white rounded-2xl p-6 border border-gray-100">
-            <div class="h-5 bg-gray-200 rounded w-3/4 mb-3"></div>
-            <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-            <div class="flex gap-2 mb-4">
-              <div class="h-5 bg-gray-200 rounded w-12"></div>
-              <div class="h-5 bg-gray-200 rounded w-16"></div>
-            </div>
-            <div class="h-px bg-gray-200 mb-3"></div>
-            <div class="flex justify-between">
-              <div class="h-4 bg-gray-200 rounded w-10"></div>
-              <div class="h-4 bg-gray-200 rounded w-10"></div>
-              <div class="h-4 bg-gray-200 rounded w-16"></div>
-              <div class="h-4 bg-gray-200 rounded w-14"></div>
+      <div v-if="pending" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div v-for="i in 8" :key="i" class="animate-pulse bg-white rounded-xl overflow-hidden border border-gray-100">
+          <div class="h-48 bg-gray-200"></div>
+          <div class="p-3">
+            <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+            <div class="h-3 bg-gray-200 rounded w-1/2 mb-3"></div>
+            <div class="flex gap-3">
+              <div class="h-3 bg-gray-200 rounded w-8"></div>
+              <div class="h-3 bg-gray-200 rounded w-10"></div>
+              <div class="h-3 bg-gray-200 rounded w-12"></div>
             </div>
           </div>
         </div>
@@ -128,56 +123,77 @@
       </div>
 
       <!-- Resort Cards Grid -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <NuxtLink
           v-for="resort in resortList"
           :key="resort.id"
           :to="`/resorts/${resort.id}`"
-          class="group block rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300"
+          class="group block bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
         >
-          <div class="relative h-52">
-            <!-- Image -->
+          <!-- Image -->
+          <div class="relative h-52 overflow-hidden">
             <img
               :src="getResortImage(resort)"
               :alt="resort.name"
-              class="w-full h-full object-cover scale-100 group-hover:scale-105 group-hover:blur-sm transition-all duration-500"
+              class="w-full h-full object-cover group-hover:scale-105 group-hover:blur-sm transition-all duration-500"
               @error="(e) => e.target.src = fallbackImage"
             />
             <!-- Default overlay -->
             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent group-hover:opacity-0 transition-opacity duration-300"></div>
-            <!-- Hover overlay -->
-            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center px-5 py-4">
-              <div class="space-y-2.5">
+            <!-- Hover overlay with metrics -->
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center px-4 py-3">
+              <div class="space-y-2">
                 <div v-for="metric in getMetrics(resort)" :key="metric.label" class="flex items-center gap-2">
                   <span class="text-sm w-4">{{ metric.icon }}</span>
                   <span class="text-white/70 text-xs w-10 shrink-0">{{ metric.label }}</span>
-                  <div class="flex-1 bg-white/20 rounded-full h-1.5">
-                    <div class="h-1.5 rounded-full" :class="metric.color" :style="{ width: metric.pct + '%' }"></div>
-                  </div>
-                  <span class="text-white text-xs font-semibold w-10 text-right shrink-0">{{ metric.value }}</span>
+                  <template v-if="metric.wide">
+                    <span class="text-white text-xs font-semibold flex-1">{{ metric.value }}</span>
+                  </template>
+                  <template v-else>
+                    <div class="flex-1 bg-white/20 rounded-full h-1.5">
+                      <div class="h-1.5 rounded-full" :class="metric.color" :style="{ width: metric.pct + '%' }"></div>
+                    </div>
+                    <span class="text-white text-xs font-semibold w-10 text-right shrink-0">{{ metric.value }}</span>
+                  </template>
                 </div>
               </div>
             </div>
-            <!-- Top badges -->
-            <div class="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
-              <span class="px-2 py-0.5 rounded-full text-xs font-medium backdrop-blur-sm"
-                :class="resort.type === 'indoor' ? 'bg-blue-500/80 text-white' : 'bg-green-500/80 text-white'">
-                {{ resort.type === 'indoor' ? '室内' : '室外' }}
-              </span>
-              <span class="px-2 py-0.5 rounded-full text-xs font-medium backdrop-blur-sm"
-                :class="isOpen(resort) ? 'bg-emerald-500/90 text-white' : 'bg-gray-500/80 text-white'">
-                {{ isOpen(resort) ? '● 开板中' : '○ 未开板' }}
-              </span>
-            </div>
+            <!-- Type badge -->
+            <span class="absolute top-2 left-2 px-1.5 py-0.5 rounded text-xs font-medium z-10"
+              :class="resort.type === 'indoor' ? 'bg-blue-500/85 text-white' : 'bg-green-500/85 text-white'">
+              {{ resort.type === 'indoor' ? '室内' : '室外' }}
+            </span>
+            <!-- Open status -->
+            <span v-if="isOpen(resort)" class="absolute top-2 right-2 px-1.5 py-0.5 rounded text-xs font-medium bg-emerald-500/85 text-white z-10">开板中</span>
+            <!-- Favorite button -->
+            <button
+              class="absolute bottom-2 right-2 z-20 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 opacity-0 group-hover:opacity-100"
+              :class="favoritedIds.has(resort.id) ? 'bg-red-500 text-white' : 'bg-white/80 text-gray-500 hover:bg-white hover:text-red-500'"
+              @click.prevent.stop="toggle(resort.id)"
+            >
+              <svg class="w-3.5 h-3.5" :fill="favoritedIds.has(resort.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
             <!-- Default bottom info -->
-            <div class="absolute bottom-0 left-0 right-0 p-4 group-hover:opacity-0 transition-opacity duration-300">
-              <h3 class="text-white font-bold text-base leading-tight mb-1">{{ resort.name }}</h3>
+            <div class="absolute bottom-0 left-0 right-0 p-3 group-hover:opacity-0 transition-opacity duration-300">
+              <h3 class="text-white font-bold text-sm leading-tight truncate mb-0.5">{{ resort.name }}</h3>
               <p class="text-white/75 text-xs">{{ resort.province }} · {{ resort.city }}</p>
-              <div class="flex items-center gap-3 mt-2 text-white/90 text-xs">
+              <div class="flex items-center gap-2 mt-1.5 text-white/90 text-xs">
                 <span>★ {{ resort.rating?.toFixed(1) || '-' }}</span>
-                <span>🎿 {{ resort.trails?.total || '-' }} 雪道</span>
+                <span>🎿 {{ resort.trails?.total || '-' }}</span>
                 <span v-if="resort.pricing?.weekdayDaily">¥{{ resort.pricing.weekdayDaily }}/天</span>
               </div>
+            </div>
+          </div>
+          <!-- Info -->
+          <div class="p-3">
+            <h3 class="font-semibold text-gray-900 text-sm leading-tight truncate mb-0.5">{{ resort.name }}</h3>
+            <p class="text-gray-400 text-xs mb-2">{{ resort.province }} · {{ resort.city }}</p>
+            <div class="flex items-center gap-3 text-xs text-gray-500">
+              <span class="font-medium text-amber-500">★ {{ resort.rating?.toFixed(1) || '-' }}</span>
+              <span>🎿 {{ resort.trails?.total || '-' }}</span>
+              <span v-if="resort.pricing?.weekdayDaily" class="ml-auto font-medium text-gray-700">¥{{ resort.pricing.weekdayDaily }}</span>
             </div>
           </div>
         </NuxtLink>
@@ -187,9 +203,10 @@
 </template>
 
 <script setup>
-definePageMeta({
-  layout: 'default',
-})
+definePageMeta({ layout: 'default' })
+
+const { favoritedIds, load, toggle } = useFavorites()
+onMounted(load)
 
 // Filter options
 const typeOptions = [
@@ -290,12 +307,18 @@ function getMetrics(resort) {
   const rating = resort.rating || 0
   const popularity = resort.popularity || 0
   const trails = resort.trails?.total || 0
-  const price = resort.pricing?.weekdayDaily || 0
+  const p = resort.pricing || {}
+  const priceLines = [
+    p.weekdayDaily && `工作日 ¥${p.weekdayDaily}`,
+    p.weekendDaily && `周末 ¥${p.weekendDaily}`,
+    p.halfDay && `半日 ¥${p.halfDay}`,
+    p.nightSkiing && `夜场 ¥${p.nightSkiing}`,
+  ].filter(Boolean)
   return [
     { icon: '⭐️', label: '评分', value: rating.toFixed(1), pct: (rating / 5) * 100, color: 'bg-yellow-400' },
     { icon: '🔥', label: '人气', value: popularity, pct: Math.min((popularity / 100) * 100, 100), color: 'bg-orange-400' },
     { icon: '🎿', label: '雪道', value: trails + '条', pct: Math.min((trails / 50) * 100, 100), color: 'bg-blue-400' },
-    { icon: '💰', label: '价格', value: price ? '¥' + price : '-', pct: price ? Math.max(100 - (price / 1000) * 100, 10) : 0, color: 'bg-green-400' },
+    { icon: '💰', label: '票价', value: priceLines.join(' / ') || '-', pct: p.weekdayDaily ? Math.max(100 - (p.weekdayDaily / 1000) * 100, 10) : 0, color: 'bg-green-400', wide: true },
   ]
 }
 

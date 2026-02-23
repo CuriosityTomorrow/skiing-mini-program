@@ -3,7 +3,7 @@
     <div class="w-full max-w-sm">
       <div class="text-center mb-8">
         <div class="text-4xl mb-3">⛷️</div>
-        <h1 class="text-2xl font-bold text-gray-900">登录滑雪场指南</h1>
+        <h1 class="text-2xl font-bold text-gray-900">登录去滑雪吧</h1>
         <p class="text-gray-500 text-sm mt-1">手机号验证码登录</p>
       </div>
 

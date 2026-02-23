@@ -8,7 +8,7 @@
           <NuxtLink to="/" class="flex items-center space-x-2 flex-shrink-0">
             <span class="text-2xl">⛷️</span>
             <span class="text-xl font-bold bg-nomad-gradient bg-clip-text text-transparent">
-              滑雪场指南
+              去滑雪吧
             </span>
           </NuxtLink>
 
@@ -29,11 +29,11 @@
               滑雪场
             </NuxtLink>
             <NuxtLink
-              to="/community"
+              to="/profile"
               class="nav-link"
-              :class="{ 'nav-link-active': $route.path === '/community' }"
+              :class="{ 'nav-link-active': $route.path.startsWith('/profile') }"
             >
-              社群
+              我的
             </NuxtLink>
           </nav>
 
@@ -42,14 +42,14 @@
             <NuxtLink v-if="!user" to="/login" class="px-4 py-1.5 bg-nomad-gradient text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity">
               登录
             </NuxtLink>
-            <div v-else class="relative group">
+            <div v-else class="relative" @mouseenter="openDropdown" @mouseleave="scheduleClose">
               <button class="flex items-center gap-2 p-1.5 rounded-full hover:bg-gray-100 transition-colors">
                 <div class="w-8 h-8 rounded-full bg-nomad-gradient flex items-center justify-center text-white text-sm font-bold">
                   {{ user.nickname?.[0] || '我' }}
                 </div>
               </button>
               <!-- Dropdown -->
-              <div class="absolute right-0 top-full mt-1 w-36 bg-white rounded-xl shadow-lg border border-gray-100 py-1 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-50">
+              <div v-show="dropdownOpen" class="absolute right-0 top-full mt-1 w-36 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50" @mouseenter="openDropdown" @mouseleave="scheduleClose">
                 <div class="px-3 py-2 text-sm font-medium text-gray-900 border-b border-gray-100">{{ user.nickname }}</div>
                 <NuxtLink v-if="user.role === 'admin'" to="/admin/resorts" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">🛠 管理后台</NuxtLink>
                 <button class="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-gray-50" @click="logout">退出登录</button>
@@ -96,12 +96,12 @@
               滑雪场
             </NuxtLink>
             <NuxtLink
-              to="/community"
+              to="/profile"
               class="nav-link-mobile"
-              :class="{ 'nav-link-mobile-active': $route.path === '/community' }"
+              :class="{ 'nav-link-mobile-active': $route.path.startsWith('/profile') }"
               @click="mobileMenuOpen = false"
             >
-              社群
+              我的
             </NuxtLink>
           </nav>
         </div>
@@ -119,10 +119,10 @@
         <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
           <div class="flex items-center space-x-2">
             <span class="text-lg">⛷️</span>
-            <span class="font-semibold bg-nomad-gradient bg-clip-text text-transparent">滑雪场指南</span>
+            <span class="font-semibold bg-nomad-gradient bg-clip-text text-transparent">去滑雪吧</span>
           </div>
           <p class="text-sm text-gray-500">
-            &copy; {{ new Date().getFullYear() }} 滑雪场指南 - Nomads Style. All rights reserved.
+            &copy; {{ new Date().getFullYear() }} 去滑雪吧 - Nomads Style. All rights reserved.
           </p>
         </div>
       </div>
@@ -133,6 +133,17 @@
 <script setup>
 const mobileMenuOpen = ref(false)
 const user = ref(null)
+const dropdownOpen = ref(false)
+let closeTimer = null
+
+function openDropdown() {
+  clearTimeout(closeTimer)
+  dropdownOpen.value = true
+}
+
+function scheduleClose() {
+  closeTimer = setTimeout(() => { dropdownOpen.value = false }, 300)
+}
 
 onMounted(() => {
   const stored = localStorage.getItem('user')

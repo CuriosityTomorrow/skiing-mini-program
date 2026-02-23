@@ -19,6 +19,13 @@ export const authCodes = sqliteTable('auth_codes', {
   used: integer('used', { mode: 'boolean' }).default(false),
 })
 
+export const favorites = sqliteTable('favorites', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: integer('user_id').notNull(),
+  resortId: integer('resort_id').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }),
+})
+
 export const resorts = sqliteTable('resorts', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),

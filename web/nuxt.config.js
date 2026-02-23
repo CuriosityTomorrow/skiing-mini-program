@@ -25,9 +25,11 @@ export default defineNuxtConfig({
     amapApiKey: process.env.AMAP_API_KEY || '41f98310392808752b5e9ea1e6bc4776',
     dbPath: process.env.DB_PATH || './db/skiing.db',
     jwtSecret: process.env.JWT_SECRET || 'skiing-app-secret-change-in-prod',
+    aliyunAccessKeyId: process.env.ALIYUN_ACCESS_KEY_ID || '',
+    aliyunAccessKeySecret: process.env.ALIYUN_ACCESS_KEY_SECRET || '',
     // 公共配置（客户端可访问）
     public: {
-      siteName: '滑雪场指南',
+      siteName: '去滑雪吧',
     },
   },
 
@@ -39,7 +41,7 @@ export default defineNuxtConfig({
   // 应用配置
   app: {
     head: {
-      title: '滑雪场指南 - 找到最适合你的滑雪场',
+      title: '去滑雪吧 - 找到最适合你的滑雪场',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
